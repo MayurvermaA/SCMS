@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Employee Dashboard - SCMS</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+            background: #080b16;
+            color: white;
+            min-height: 100vh;
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            width: 250px;
+
+            padding: 25px 16px;
+
+            background: #0d1120;
+
+            border-right: 1px solid #20263a;
+
+            z-index: 100;
+        }
+
+
+        .logo {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            margin: 5px 12px 40px;
+        }
+
+
+        .logo-box {
+            width: 55px;
+            height: 55px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6c63ff,
+                    #00cfff
+                );
+
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+
+        .logo-text {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+
+        .menu-title {
+            color: #68728d;
+
+            font-size: 11px;
+
+            margin: 20px 12px 10px;
+
+            text-transform: uppercase;
+        }
+
+
+        .menu a {
+            display: flex;
+
+            gap: 12px;
+
+            align-items: center;
+
+            padding: 14px 16px;
+
+            color: #9ca5bd;
+
+            text-decoration: none;
+
+            border-radius: 12px;
+
+            margin-bottom: 6px;
+
+            transition: 0.2s;
+        }
+
+
+        .menu a:hover,
+        .menu a.active {
+            color: white;
+
+            background:
+                rgba(
+                    108,
+                    99,
+                    255,
+                    0.18
+                );
+        }
+
+
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
+
+        .logout {
+            position: absolute;
+
+            left: 16px;
+            right: 16px;
+
+            bottom: 20px;
+        }
+
+
+        .logout button {
+            width: 100%;
+
+            padding: 13px;
+
+            border: 1px solid #303750;
+
+            border-radius: 12px;
+
+            background: #0d1120;
+
+            color: #ff8585;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            transition: 0.2s;
+        }
+
+
+        .logout button:hover {
+            background: #171d32;
+
+            border-color: #ff8585;
+        }
+
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main {
+            margin-left: 250px;
+
+            min-height: 100vh;
+        }
+
+
+        /* =====================================================
+           TOPBAR
+        ===================================================== */
+
+        .topbar {
+            height: 82px;
+
+            padding: 0 35px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            border-bottom: 1px solid #20263a;
+        }
+
+
+        .title {
+            font-size: 26px;
+
+            font-weight: bold;
+        }
+
+
+        .user {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+
+        .user-text {
+            text-align: right;
+        }
+
+
+        .user-name {
+            font-weight: bold;
+        }
+
+
+        .user-role {
+            color: #7d87a1;
+
+            font-size: 12px;
+
+            margin-top: 4px;
+        }
+
+
+        .avatar {
+            width: 46px;
+
+            height: 46px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6c63ff,
+                    #00cfff
+                );
+
+            font-weight: bold;
+
+            font-size: 18px;
+        }
+
+
+        /* =====================================================
+           CONTENT
+        ===================================================== */
+
+        .content {
+            padding: 35px 40px;
+        }
+
+
+        h1 {
+            font-size: 40px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .subtitle {
+            color: #8791aa;
+
+            font-size: 17px;
+
+            margin-bottom: 30px;
+        }
+
+
+        /* =====================================================
+           SMALL DASHBOARD CARDS
+        ===================================================== */
+
+        .cards {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 18px;
+
+            max-width: 1000px;
+        }
+
+
+        .card {
+            padding: 22px;
+
+            min-height: 205px;
+
+            background: #111628;
+
+            border: 1px solid #20263a;
+
+            border-radius: 18px;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s,
+                border-color 0.2s,
+                box-shadow 0.2s;
+        }
+
+
+        .card:hover {
+            transform:
+                translateY(-4px);
+
+            border-color: #6c63ff;
+
+            box-shadow:
+                0 12px 30px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.25
+                );
+        }
+
+
+        .card-icon {
+            font-size: 38px;
+
+            margin-bottom: 14px;
+        }
+
+
+        .card h2 {
+            font-size: 23px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .card p {
+            color: #7f89a3;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+
+        /* =====================================================
+           NOTIFICATION
+        ===================================================== */
+
+        .notification-wrapper {
+            position: relative;
+        }
+
+
+        .notification-btn {
+            width: 44px;
+
+            height: 44px;
+
+            border: 1px solid #29324d;
+
+            border-radius: 12px;
+
+            background: #111628;
+
+            color: white;
+
+            font-size: 21px;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            position: relative;
+        }
+
+
+        .notification-btn:hover {
+            border-color: #00cfff;
+
+            background: #151d35;
+        }
+
+
+        .notification-badge {
+            position: absolute;
+
+            top: -5px;
+
+            right: -5px;
+
+            min-width: 19px;
+
+            height: 19px;
+
+            padding: 0 5px;
+
+            border-radius: 20px;
+
+            background: #ff4d6d;
+
+            color: white;
+
+            font-size: 11px;
+
+            font-weight: bold;
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+        }
+
+
+        .notification-panel {
+            position: absolute;
+
+            top: 55px;
+
+            right: 0;
+
+            width: 360px;
+
+            max-height: 450px;
+
+            overflow-y: auto;
+
+            background: #111628;
+
+            border: 1px solid #29324d;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 20px 50px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.45
+                );
+
+            display: none;
+
+            z-index: 1000;
+        }
+
+
+        .notification-panel.show {
+            display: block;
+        }
+
+
+        .notification-header {
+            padding: 17px 18px;
+
+            border-bottom:
+                1px solid #252d43;
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+        }
+
+
+        .notification-header h3 {
+            margin: 0;
+
+            font-size: 16px;
+        }
+
+
+        .notification-item {
+            padding: 15px 18px;
+
+            border-bottom:
+                1px solid #20263a;
+
+            cursor: pointer;
+        }
+
+
+        .notification-item:hover {
+            background: #171d32;
+        }
+
+
+        .notification-item.unread {
+            background:
+                rgba(
+                    108,
+                    99,
+                    255,
+                    0.10
+                );
+        }
+
+
+        .notification-title {
+            font-weight: bold;
+
+            margin-bottom: 6px;
+
+            font-size: 14px;
+        }
+
+
+        .notification-message {
+            color: #8f99b2;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+
+        .notification-time {
+            color: #59647e;
+
+            font-size: 11px;
+
+            margin-top: 7px;
+        }
+
+
+        .no-notifications {
+            padding: 35px 20px;
+
+            text-align: center;
+
+            color: #737e98;
+        }
+
+
+        /* =====================================================
+           MOBILE / TABLET
+        ===================================================== */
+
+        @media (max-width: 1000px) {
+
+            .cards {
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+                max-width: 750px;
+            }
+
+        }
+
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                width: 80px;
+            }
+
+
+            .logo-text,
+            .menu-title {
+                display: none;
+            }
+
+
+            .logo {
+                justify-content: center;
+
+                margin-left: 0;
+
+                margin-right: 0;
+            }
+
+
+            .menu a {
+                justify-content: center;
+
+                font-size: 0;
+            }
+
+
+            .menu a:first-letter {
+                font-size: 20px;
+            }
+
+
+            .main {
+                margin-left: 80px;
+            }
+
+
+            .content {
+                padding: 25px;
+            }
+
+
+            h1 {
+                font-size: 32px;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+
+            .title {
+                font-size: 20px;
+            }
+
+
+            .user-text {
+                display: none;
+            }
+
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+
+            .card {
+                min-height: 180px;
+
+                padding: 20px;
+            }
+
+
+            .notification-panel {
+                right: -70px;
+
+                width: 320px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ===================================================== -->
+
+    <aside class="sidebar">
+
+
+        <div class="logo">
+
+            <div class="logo-box">
+                SC
+            </div>
+
+
+            <div class="logo-text">
+                SCMS
+            </div>
+
+        </div>
+
+
+
+        <div class="menu-title">
+            Employee Menu
+        </div>
+
+
+
+        <div class="menu">
+
+
+            <a
+                href="/employee-dashboard"
+                class="active"
+            >
+                🏠 Dashboard
+            </a>
+
+
+            <a href="/employee-profile">
+                👤 My Profile
+            </a>
+
+
+            <a href="/employee-attendance">
+                📅 Attendance
+            </a>
+
+
+            <a href="/employee-projects">
+                📁 My Projects
+            </a>
+
+
+            <a href="/employee-tasks">
+                ✅ My Tasks
+            </a>
+
+
+        </div>
+
+
+
+        <div class="logout">
+
+            <button
+                onclick="logout()"
+            >
+                🚪 Logout
+            </button>
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ===================================================== -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+
+            <div class="title">
+                Employee Dashboard
+            </div>
+
+
+
+            <div class="user">
+
+
+                <div class="user-text">
+
+                    <div
+                        class="user-name"
+                        id="userName"
+                    >
+                        Employee
+                    </div>
+
+
+                    <div class="user-role">
+                        Employee
+                    </div>
+
+                </div>
+
+
+
+                <!-- NOTIFICATION -->
+
+                <div
+                    class="notification-wrapper"
+                >
+
+
+                    <button
+                        class="notification-btn"
+                        onclick="toggleNotifications()"
+                        title="Notifications"
+                    >
+
+                        🔔
+
+
+                        <span
+                            id="notificationBadge"
+                            class="notification-badge"
+                        >
+                            0
+                        </span>
+
+                    </button>
+
+
+
+                    <div
+                        id="notificationPanel"
+                        class="notification-panel"
+                    >
+
+
+                        <div
+                            class="notification-header"
+                        >
+
+                            <h3>
+                                Notifications
+                            </h3>
+
+                        </div>
+
+
+
+                        <div
+                            id="notificationList"
+                        >
+
+                            <div
+                                class="no-notifications"
+                            >
+                                Loading...
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- AVATAR -->
+
+                <div
+                    class="avatar"
+                    id="avatar"
+                >
+                    E
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- =================================================
+             CONTENT
+        ================================================== -->
+
+        <section class="content">
+
+
+            <h1>
+                Welcome back! 👋
+            </h1>
+
+
+            <p class="subtitle">
+                Here's your work overview.
+            </p>
+
+
+
+            <!-- =================================================
+                 SMALL CARDS
+            ================================================= -->
+
+            <div class="cards">
+
+
+                <!-- PROFILE -->
+
+                <div
+                    class="card"
+                    onclick="
+                        openPage(
+                            '/employee-profile'
+                        )
+                    "
+                >
+
+                    <div class="card-icon">
+                        👤
+                    </div>
+
+
+                    <h2>
+                        My Profile
+                    </h2>
+
+
+                    <p>
+                        View your employee information.
+                    </p>
+
+                </div>
+
+
+
+                <!-- PROJECTS -->
+
+                <div
+                    class="card"
+                    onclick="
+                        openPage(
+                            '/employee-projects'
+                        )
+                    "
+                >
+
+                    <div class="card-icon">
+                        📁
+                    </div>
+
+
+                    <h2>
+                        My Projects
+                    </h2>
+
+
+                    <p>
+                        View projects assigned to you.
+                    </p>
+
+                </div>
+
+
+
+                <!-- TASKS -->
+
+                <div
+                    class="card"
+                    onclick="
+                        openPage(
+                            '/employee-tasks'
+                        )
+                    "
+                >
+
+                    <div class="card-icon">
+                        ✅
+                    </div>
+
+
+                    <h2>
+                        My Tasks
+                    </h2>
+
+
+                    <p>
+                        View and manage your assigned tasks.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ===================================================== -->
+
+    <script>
+
+
+        /* =====================================================
+           LOGIN USER
+        ===================================================== */
+
+        const savedUser =
+            localStorage.getItem(
+                "scmsUser"
+            );
+
+
+        if (!savedUser) {
+
+            window.location.href =
+                "/login";
+
+        }
+
+
+        let currentUser = null;
+
+
+        try {
+
+            currentUser =
+                JSON.parse(
+                    savedUser
+                );
+
+        }
+        catch (error) {
+
+            console.error(
+                "User data error:",
+                error
+            );
+
+
+            localStorage.removeItem(
+                "scmsUser"
+            );
+
+
+            window.location.href =
+                "/login";
+
+        }
+
+
+
+        /* =====================================================
+           USER INFORMATION
+        ===================================================== */
+
+        if (currentUser) {
+
+
+            const name =
+                currentUser.name ||
+                "Employee";
+
+
+            const userName =
+                document.getElementById(
+                    "userName"
+                );
+
+
+            const avatar =
+                document.getElementById(
+                    "avatar"
+                );
+
+
+            if (userName) {
+
+                userName.textContent =
+                    name;
+
+            }
+
+
+            if (avatar) {
+
+                avatar.textContent =
+                    name
+                        .charAt(0)
+                        .toUpperCase();
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           NOTIFICATIONS
+        ===================================================== */
+
+        let notifications = [];
+
+
+
+        /* =====================================================
+           LOAD NOTIFICATIONS
+        ===================================================== */
+
+        async function loadNotifications() {
+
+
+            if (
+                !currentUser ||
+                !currentUser.id
+            ) {
+
+                return;
+
+            }
+
+
+            const list =
+                document.getElementById(
+                    "notificationList"
+                );
+
+
+            if (!list) {
+
+                return;
+
+            }
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        `/api/notifications/${currentUser.id}`,
+                        {
+                            method: "GET",
+
+                            cache: "no-store",
+
+                            headers: {
+                                "Accept":
+                                    "application/json"
+                            }
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "Notification Response:",
+                    data
+                );
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+
+                    list.innerHTML = `
+
+                        <div
+                            class="no-notifications"
+                        >
+                            ❌ Unable to load notifications
+                        </div>
+
+                    `;
+
+
+                    return;
+
+                }
+
+
+                notifications =
+                    data.notifications ||
+                    [];
+
+
+                renderNotifications();
+
+
+                updateNotificationBadge();
+
+
+            }
+            catch (error) {
+
+
+                console.error(
+                    "Notification Error:",
+                    error
+                );
+
+
+                list.innerHTML = `
+
+                    <div
+                        class="no-notifications"
+                    >
+                        ❌ Notification loading failed
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           UPDATE NOTIFICATION BADGE
+        ===================================================== */
+
+        function updateNotificationBadge() {
+
+
+            const badge =
+                document.getElementById(
+                    "notificationBadge"
+                );
+
+
+            if (!badge) {
+
+                return;
+
+            }
+
+
+            const unread =
+                notifications.filter(
+                    notification =>
+                        !notification.is_read
+                ).length;
+
+
+            if (unread > 0) {
+
+
+                badge.textContent =
+                    unread > 99
+                        ? "99+"
+                        : unread;
+
+
+                badge.style.display =
+                    "flex";
+
+            }
+            else {
+
+                badge.style.display =
+                    "none";
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           RENDER NOTIFICATIONS
+        ===================================================== */
+
+        function renderNotifications() {
+
+
+            const list =
+                document.getElementById(
+                    "notificationList"
+                );
+
+
+            if (!list) {
+
+                return;
+
+            }
+
+
+            if (
+                notifications.length === 0
+            ) {
+
+
+                list.innerHTML = `
+
+                    <div
+                        class="no-notifications"
+                    >
+                        🔔 No notifications
+                    </div>
+
+                `;
+
+
+                return;
+
+            }
+
+
+            list.innerHTML =
+                notifications
+                    .map(
+                        notification => {
+
+
+                            const unread =
+                                !notification.is_read
+                                    ? "unread"
+                                    : "";
+
+
+                            let icon =
+                                "🔔";
+
+
+                            if (
+                                notification.type ===
+                                "project"
+                            ) {
+
+                                icon =
+                                    "📁";
+
+                            }
+
+
+                            if (
+                                notification.type ===
+                                "task"
+                            ) {
+
+                                icon =
+                                    "✅";
+
+                            }
+
+
+                            return `
+
+                                <div
+                                    class="
+                                        notification-item
+                                        ${unread}
+                                    "
+                                    onclick="
+                                        markNotificationRead(
+                                            ${notification.id}
+                                        )
+                                    "
+                                >
+
+                                    <div
+                                        class="
+                                            notification-title
+                                        "
+                                    >
+
+                                        ${icon}
+
+                                        ${escapeNotificationHtml(
+                                            notification.title
+                                        )}
+
+                                    </div>
+
+
+                                    <div
+                                        class="
+                                            notification-message
+                                        "
+                                    >
+
+                                        ${escapeNotificationHtml(
+                                            notification.message
+                                        )}
+
+                                    </div>
+
+
+                                    <div
+                                        class="
+                                            notification-time
+                                        "
+                                    >
+
+                                        ${escapeNotificationHtml(
+                                            notification.created_at
+                                        )}
+
+                                    </div>
+
+                                </div>
+
+                            `;
+
+                        }
+                    )
+                    .join("");
+
+        }
+
+
+
+        /* =====================================================
+           MARK NOTIFICATION AS READ
+        ===================================================== */
+
+        async function markNotificationRead(
+            notificationId
+        ) {
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        `/api/notifications/${notificationId}/read`,
+                        {
+                            method: "PUT",
+
+                            headers: {
+                                "Accept":
+                                    "application/json"
+                            }
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+
+                    console.error(
+                        data.message ||
+                        "Unable to mark notification"
+                    );
+
+
+                    return;
+
+                }
+
+
+                await loadNotifications();
+
+
+            }
+            catch (error) {
+
+
+                console.error(
+                    "Mark notification error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           TOGGLE NOTIFICATIONS
+        ===================================================== */
+
+        function toggleNotifications() {
+
+
+            const panel =
+                document.getElementById(
+                    "notificationPanel"
+                );
+
+
+            if (!panel) {
+
+                return;
+
+            }
+
+
+            panel.classList.toggle(
+                "show"
+            );
+
+
+            if (
+                panel.classList.contains(
+                    "show"
+                )
+            ) {
+
+                loadNotifications();
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           CLOSE NOTIFICATION PANEL
+        ===================================================== */
+
+        document.addEventListener(
+            "click",
+            function(event) {
+
+
+                const wrapper =
+                    document.querySelector(
+                        ".notification-wrapper"
+                    );
+
+
+                const panel =
+                    document.getElementById(
+                        "notificationPanel"
+                    );
+
+
+                if (
+                    wrapper &&
+                    panel &&
+                    !wrapper.contains(
+                        event.target
+                    )
+                ) {
+
+
+                    panel.classList.remove(
+                        "show"
+                    );
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           ESCAPE HTML
+        ===================================================== */
+
+        function escapeNotificationHtml(
+            value
+        ) {
+
+
+            if (
+                value === null ||
+                value === undefined
+            ) {
+
+                return "";
+
+            }
+
+
+            return String(value)
+
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+
+        /* =====================================================
+           OPEN PAGE
+        ===================================================== */
+
+        function openPage(url) {
+
+            window.location.href =
+                url;
+
+        }
+
+
+
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
+
+        function logout() {
+
+
+            localStorage.removeItem(
+                "scmsUser"
+            );
+
+
+            window.location.href =
+                "/login";
+
+        }
+
+
+
+        /* =====================================================
+           START
+        ===================================================== */
+
+        loadNotifications();
+
+
+        setInterval(
+            loadNotifications,
+            30000
+        );
+
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SCMS - Sign In</title>
+
+
+    <style>
+
+        /* =================================================
+           RESET
+        ================================================= */
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+
+        /* =================================================
+           BODY
+        ================================================= */
+
+        body{
+
+            min-height:100vh;
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:center;
+
+            background:
+                radial-gradient(
+                    circle at top left,
+                    rgba(90,80,255,.15),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at bottom right,
+                    rgba(0,207,255,.10),
+                    transparent 35%
+                ),
+                #080b16;
+
+            color:white;
+
+            padding:20px;
+
+        }
+
+
+        /* =================================================
+           LOGIN CARD
+        ================================================= */
+
+        .login-card{
+
+            width:100%;
+
+            max-width:540px;
+
+            min-height:700px;
+
+            padding:50px 60px 30px;
+
+            background:#111628;
+
+            border:
+                1px solid #303750;
+
+            border-radius:22px;
+
+            box-shadow:
+                0 30px 80px
+                rgba(0,0,0,.35);
+
+        }
+
+
+        /* =================================================
+           LOGO
+        ================================================= */
+
+        .logo{
+
+            width:102px;
+
+            height:102px;
+
+            margin:0 auto 30px;
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:center;
+
+            border-radius:25px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6c63ff,
+                    #00cfff
+                );
+
+            font-size:36px;
+
+            font-weight:bold;
+
+            box-shadow:
+                0 15px 35px
+                rgba(0,170,255,.20);
+
+        }
+
+
+        /* =================================================
+           TITLE
+        ================================================= */
+
+        h1{
+
+            text-align:center;
+
+            font-size:42px;
+
+            margin-bottom:12px;
+
+        }
+
+
+        .subtitle{
+
+            text-align:center;
+
+            color:#9aa4bd;
+
+            font-size:20px;
+
+            margin-bottom:42px;
+
+        }
+
+
+        /* =================================================
+           FORM GROUP
+        ================================================= */
+
+        .form-group{
+
+            margin-bottom:30px;
+
+        }
+
+
+        label{
+
+            display:block;
+
+            margin-bottom:11px;
+
+            font-size:18px;
+
+            font-weight:bold;
+
+            color:#d7dbea;
+
+        }
+
+
+        /* =================================================
+           PASSWORD LABEL
+        ================================================= */
+
+        .password-label{
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:space-between;
+
+            gap:10px;
+
+        }
+
+
+        .forgot-link{
+
+            color:#8292ff;
+
+            font-size:14px;
+
+            font-weight:normal;
+
+            text-decoration:none;
+
+        }
+
+
+        .forgot-link:hover{
+
+            color:#00cfff;
+
+            text-decoration:underline;
+
+        }
+
+
+        /* =================================================
+           INPUT
+        ================================================= */
+
+        input{
+
+            width:100%;
+
+            height:70px;
+
+            padding:0 22px;
+
+            background:#111628;
+
+            color:white;
+
+            border:
+                1px solid #303750;
+
+            border-radius:15px;
+
+            outline:none;
+
+            font-size:20px;
+
+            transition:.2s;
+
+        }
+
+
+        input::placeholder{
+
+            color:#68728d;
+
+        }
+
+
+        input:focus{
+
+            border-color:#6c63ff;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(108,99,255,.10);
+
+        }
+
+
+        /* =================================================
+           LOGIN BUTTON
+        ================================================= */
+
+        .login-btn{
+
+            width:100%;
+
+            height:70px;
+
+            border:none;
+
+            border-radius:15px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6c63ff,
+                    #00cfff
+                );
+
+            color:white;
+
+            font-size:24px;
+
+            font-weight:bold;
+
+            cursor:pointer;
+
+            transition:.2s;
+
+        }
+
+
+        .login-btn:hover{
+
+            transform:
+                translateY(-1px);
+
+            box-shadow:
+                0 12px 30px
+                rgba(0,190,255,.20);
+
+        }
+
+
+        .login-btn:disabled{
+
+            opacity:.65;
+
+            cursor:not-allowed;
+
+            transform:none;
+
+        }
+
+
+        /* =================================================
+           MESSAGE
+        ================================================= */
+
+        .message{
+
+            display:none;
+
+            margin-top:20px;
+
+            padding:13px 15px;
+
+            border-radius:10px;
+
+            text-align:center;
+
+            font-size:14px;
+
+        }
+
+
+        .message.error{
+
+            display:block;
+
+            color:#ff9b9b;
+
+            background:
+                rgba(
+                    255,
+                    70,
+                    70,
+                    .10
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    70,
+                    70,
+                    .20
+                );
+
+        }
+
+
+        .message.success{
+
+            display:block;
+
+            color:#53e6a4;
+
+            background:
+                rgba(
+                    0,
+                    220,
+                    130,
+                    .10
+                );
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    220,
+                    130,
+                    .20
+                );
+
+        }
+
+
+        /* =================================================
+           FOOTER
+        ================================================= */
+
+        .footer{
+
+            margin-top:38px;
+
+            text-align:center;
+
+            color:#77819b;
+
+            font-size:17px;
+
+        }
+
+
+        /* =================================================
+           MOBILE
+        ================================================= */
+
+        @media(max-width:600px){
+
+            body{
+
+                padding:0;
+
+            }
+
+
+            .login-card{
+
+                min-height:100vh;
+
+                max-width:none;
+
+                border-radius:0;
+
+                border:none;
+
+                padding:
+                    45px 25px 25px;
+
+            }
+
+
+            .logo{
+
+                width:85px;
+
+                height:85px;
+
+                font-size:30px;
+
+            }
+
+
+            h1{
+
+                font-size:34px;
+
+            }
+
+
+            .subtitle{
+
+                font-size:17px;
+
+            }
+
+
+            input{
+
+                height:60px;
+
+                font-size:17px;
+
+            }
+
+
+            .login-btn{
+
+                height:60px;
+
+                font-size:20px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =================================================
+         LOGIN CARD
+    ================================================= -->
+
+    <div class="login-card">
+
+
+        <!-- LOGO -->
+
+        <div class="logo">
+            SC
+        </div>
+
+
+        <!-- TITLE -->
+
+        <h1>
+            Welcome Back
+        </h1>
+
+
+        <p class="subtitle">
+            Software Company Management System
+        </p>
+
+
+        <!-- =================================================
+             LOGIN FORM
+        ================================================= -->
+
+        <form
+            id="loginForm"
+            onsubmit="loginUser(event)"
+        >
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="admin@scms.com"
+                    autocomplete="email"
+                    required
+                >
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="form-group">
+
+                <div class="password-label">
+
+                    <label
+                        for="password"
+                        style="margin-bottom:0;"
+                    >
+                        Password
+                    </label>
+
+
+                    <a
+                        href="/forgot-password"
+                        class="forgot-link"
+                    >
+                        Forgot Password?
+                    </a>
+
+                </div>
+
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+
+            </div>
+
+
+            <!-- BUTTON -->
+
+            <button
+                type="submit"
+                class="login-btn"
+                id="loginButton"
+            >
+                Sign In
+            </button>
+
+
+            <!-- MESSAGE -->
+
+            <div
+                class="message"
+                id="message"
+            ></div>
+
+
+        </form>
+
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+            SCMS © 2026 · Secure Management System
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         JAVASCRIPT
+    ================================================= -->
+
+    <script>
+
+
+        /* ================================================
+           SHOW MESSAGE
+        ================================================ */
+
+        function showMessage(
+            text,
+            type = "error"
+        ){
+
+            const message =
+                document.getElementById(
+                    "message"
+                );
+
+
+            message.textContent =
+                text;
+
+
+            message.className =
+                "message " + type;
+
+        }
+
+
+        /* ================================================
+           LOGIN
+        ================================================ */
+
+        async function loginUser(event){
+
+            event.preventDefault();
+
+
+            const email =
+                document.getElementById(
+                    "email"
+                )
+                .value
+                .trim();
+
+
+            const password =
+                document.getElementById(
+                    "password"
+                )
+                .value;
+
+
+            const button =
+                document.getElementById(
+                    "loginButton"
+                );
+
+
+            if(!email){
+
+                showMessage(
+                    "Please enter your email."
+                );
+
+                return;
+
+            }
+
+
+            if(!password){
+
+                showMessage(
+                    "Please enter your password."
+                );
+
+                return;
+
+            }
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "Signing In...";
+
+
+            try{
+
+
+                const response =
+                    await fetch(
+                        "/api/login",
+                        {
+
+                            method:"POST",
+
+                            headers:{
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    email:
+                                        email,
+
+                                    password:
+                                        password
+
+                                })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if(
+                    !response.ok ||
+                    !data.success
+                ){
+
+                    throw new Error(
+                        data.message ||
+                        "Invalid email or password"
+                    );
+
+                }
+
+
+                /* ----------------------------------------
+                   SAVE USER
+                ---------------------------------------- */
+
+                localStorage.setItem(
+                    "scmsUser",
+                    JSON.stringify(
+                        data.user
+                    )
+                );
+
+
+                showMessage(
+                    "Login successful. Redirecting...",
+                    "success"
+                );
+
+
+                /* ----------------------------------------
+                   ROLE BASED REDIRECT
+                ---------------------------------------- */
+
+                setTimeout(
+                    function(){
+
+                        if(
+                            data.redirect
+                        ){
+
+                            window.location.href =
+                                data.redirect;
+
+                        }
+                        else if(
+                            data.user &&
+                            String(
+                                data.user.role
+                            ).toLowerCase()
+                            ===
+                            "admin"
+                        ){
+
+                            window.location.href =
+                                "/dashboard";
+
+                        }
+                        else{
+
+                            window.location.href =
+                                "/employee-dashboard";
+
+                        }
+
+                    },
+                    500
+                );
+
+
+            }
+            catch(error){
+
+                console.error(
+                    "Login Error:",
+                    error
+                );
+
+
+                showMessage(
+                    error.message ||
+                    "Unable to login."
+                );
+
+
+                button.disabled =
+                    false;
+
+
+                button.textContent =
+                    "Sign In";
+
+            }
+
+        }
+
+
+        /* ================================================
+           ENTER KEY
+        ================================================ */
+
+        document
+            .getElementById("password")
+            .addEventListener(
+                "keydown",
+                function(event){
+
+                    if(
+                        event.key === "Enter"
+                    ){
+
+                        document
+                            .getElementById(
+                                "loginForm"
+                            )
+                            .requestSubmit();
+
+                    }
+
+                }
+            );
+
+
+    </script>
+
+
+</body>
+
+</html>

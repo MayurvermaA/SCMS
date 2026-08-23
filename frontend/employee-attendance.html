@@ -1,0 +1,2249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Employee Attendance - SCMS</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        body {
+            min-height: 100vh;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+            height: 70px;
+
+            background: #ffffff;
+
+            border-bottom: 1px solid #e5e7eb;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 30px;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+        }
+
+
+        .brand {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+
+        .brand-icon {
+            width: 42px;
+
+            height: 42px;
+
+            border-radius: 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #2563eb;
+
+            color: white;
+
+            font-size: 20px;
+
+            font-weight: bold;
+        }
+
+
+        .brand-text h2 {
+            font-size: 18px;
+
+            color: #111827;
+        }
+
+
+        .brand-text span {
+            font-size: 12px;
+
+            color: #6b7280;
+        }
+
+
+        .header-right {
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+        }
+
+
+        .user-name {
+            font-size: 14px;
+
+            font-weight: 600;
+
+            color: #374151;
+        }
+
+
+        .logout-btn {
+            border: none;
+
+            background: #fee2e2;
+
+            color: #dc2626;
+
+            padding: 10px 16px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-weight: 600;
+        }
+
+
+        .logout-btn:hover {
+            background: #fecaca;
+        }
+
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .container {
+            width: 100%;
+
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            padding: 30px;
+        }
+
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+
+        .page-title h1 {
+            font-size: 30px;
+
+            color: #111827;
+
+            margin-bottom: 7px;
+        }
+
+
+        .page-title p {
+            color: #6b7280;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           ATTENDANCE CARD
+        ========================= */
+
+        .attendance-card {
+            background: #ffffff;
+
+            border-radius: 18px;
+
+            padding: 30px;
+
+            border: 1px solid #e5e7eb;
+
+            box-shadow:
+                0 10px 30px
+                rgba(0, 0, 0, 0.05);
+
+            margin-bottom: 25px;
+        }
+
+
+        .attendance-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 25px;
+        }
+
+
+        .attendance-header h2 {
+            font-size: 20px;
+
+            color: #111827;
+        }
+
+
+        .date {
+            color: #6b7280;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status-box {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 14px 18px;
+
+            background: #f9fafb;
+
+            border-radius: 12px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .status-dot {
+            width: 12px;
+
+            height: 12px;
+
+            border-radius: 50%;
+
+            background: #9ca3af;
+        }
+
+
+        .status-dot.present {
+            background: #22c55e;
+        }
+
+
+        .status-dot.completed {
+            background: #2563eb;
+        }
+
+
+        .status-text {
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+
+        /* =========================
+           TIME BOXES
+        ========================= */
+
+        .time-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 18px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .time-box {
+            background: #f9fafb;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 14px;
+
+            padding: 20px;
+        }
+
+
+        .time-box .label {
+            font-size: 13px;
+
+            color: #6b7280;
+
+            margin-bottom: 8px;
+        }
+
+
+        .time-box .value {
+            font-size: 22px;
+
+            font-weight: 700;
+
+            color: #111827;
+        }
+
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .button-row {
+            display: flex;
+
+            gap: 15px;
+        }
+
+
+        .btn {
+            flex: 1;
+
+            border: none;
+
+            padding: 14px 20px;
+
+            border-radius: 10px;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .btn:disabled {
+            cursor: not-allowed;
+
+            opacity: 0.5;
+        }
+
+
+        .checkin-btn {
+            background: #16a34a;
+
+            color: white;
+        }
+
+
+        .checkin-btn:hover:not(:disabled) {
+            background: #15803d;
+        }
+
+
+        .checkout-btn {
+            background: #dc2626;
+
+            color: white;
+        }
+
+
+        .checkout-btn:hover:not(:disabled) {
+            background: #b91c1c;
+        }
+
+
+        /* =========================
+           HISTORY
+        ========================= */
+
+        .history-card {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 18px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 10px 30px
+                rgba(0, 0, 0, 0.04);
+        }
+
+
+        .history-header {
+            margin-bottom: 20px;
+        }
+
+
+        .history-header h2 {
+            font-size: 20px;
+
+            color: #111827;
+        }
+
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+
+        th {
+            text-align: left;
+
+            padding: 14px;
+
+            background: #f9fafb;
+
+            color: #6b7280;
+
+            font-size: 13px;
+        }
+
+
+        td {
+            padding: 15px 14px;
+
+            border-bottom: 1px solid #f0f0f0;
+
+            font-size: 14px;
+
+            color: #374151;
+        }
+
+
+        .badge {
+            display: inline-block;
+
+            padding: 6px 10px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+
+        .badge-present {
+            background: #dcfce7;
+
+            color: #15803d;
+        }
+
+
+        .badge-completed {
+            background: #dbeafe;
+
+            color: #1d4ed8;
+        }
+
+
+        .badge-absent {
+            background: #fee2e2;
+
+            color: #dc2626;
+        }
+
+
+        .empty {
+            text-align: center;
+
+            padding: 40px;
+
+            color: #9ca3af;
+        }
+
+
+        /* =========================
+           TOAST
+        ========================= */
+
+        .toast {
+            position: fixed;
+
+            right: 25px;
+
+            bottom: 25px;
+
+            min-width: 280px;
+
+            padding: 15px 20px;
+
+            background: #111827;
+
+            color: white;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 10px 30px
+                rgba(0, 0, 0, 0.2);
+
+            opacity: 0;
+
+            transform:
+                translateY(20px);
+
+            pointer-events: none;
+
+            transition: 0.3s;
+
+            z-index: 9999;
+        }
+
+
+        .toast.show {
+            opacity: 1;
+
+            transform:
+                translateY(0);
+        }
+
+
+        .toast.success {
+            background: #15803d;
+        }
+
+
+        .toast.error {
+            background: #dc2626;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media(max-width: 768px) {
+
+            .header {
+                padding: 0 15px;
+            }
+
+
+            .user-name {
+                display: none;
+            }
+
+
+            .brand-text {
+                display: none;
+            }
+
+
+            .container {
+                padding: 20px 15px;
+            }
+
+
+            .page-title h1 {
+                font-size: 24px;
+            }
+
+
+            .attendance-card,
+            .history-card {
+                padding: 20px;
+            }
+
+
+            .attendance-header {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 8px;
+            }
+
+
+            .time-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .button-row {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <header class="header">
+
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                SC
+            </div>
+
+
+            <div class="brand-text">
+
+                <h2>
+                    SCMS
+                </h2>
+
+                <span>
+                    Software Company Management System
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="header-right">
+
+            <span
+                class="user-name"
+                id="userName"
+            >
+                Employee
+            </span>
+
+
+            <button
+                class="logout-btn"
+                onclick="logout()"
+            >
+                Logout
+            </button>
+
+        </div>
+
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN
+    ========================= -->
+
+    <main class="container">
+
+
+        <div class="page-title">
+
+            <h1>
+                My Attendance
+            </h1>
+
+            <p>
+                Manage your daily check-in and check-out
+            </p>
+
+        </div>
+
+
+
+        <!-- =========================
+             TODAY ATTENDANCE
+        ========================= -->
+
+        <section class="attendance-card">
+
+
+            <div class="attendance-header">
+
+                <h2>
+                    Today's Attendance
+                </h2>
+
+
+                <span
+                    class="date"
+                    id="todayDate"
+                >
+                    Loading...
+                </span>
+
+            </div>
+
+
+
+            <!-- STATUS -->
+
+            <div class="status-box">
+
+                <div
+                    class="status-dot"
+                    id="statusDot"
+                ></div>
+
+
+                <span
+                    class="status-text"
+                    id="statusText"
+                >
+                    Not Checked In
+                </span>
+
+            </div>
+
+
+
+            <!-- TIME -->
+
+            <div class="time-grid">
+
+
+                <div class="time-box">
+
+                    <div class="label">
+                        Check In
+                    </div>
+
+
+                    <div
+                        class="value"
+                        id="checkInTime"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+
+                <div class="time-box">
+
+                    <div class="label">
+                        Check Out
+                    </div>
+
+
+                    <div
+                        class="value"
+                        id="checkOutTime"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+
+                <div class="time-box">
+
+                    <div class="label">
+                        Working Hours
+                    </div>
+
+
+                    <div
+                        class="value"
+                        id="workingHours"
+                    >
+                        0.00 h
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- BUTTONS -->
+
+            <div class="button-row">
+
+
+                <button
+                    class="btn checkin-btn"
+                    id="checkInButton"
+                    onclick="checkIn()"
+                >
+                    Check In
+                </button>
+
+
+                <button
+                    class="btn checkout-btn"
+                    id="checkOutButton"
+                    onclick="checkOut()"
+                    disabled
+                >
+                    Check Out
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             ATTENDANCE HISTORY
+        ========================= -->
+
+        <section class="history-card">
+
+
+            <div class="history-header">
+
+                <h2>
+                    Attendance History
+                </h2>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+
+                <table>
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Check In
+                            </th>
+
+                            <th>
+                                Check Out
+                            </th>
+
+                            <th>
+                                Working Hours
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="historyBody"
+                    >
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                class="empty"
+                            >
+                                Loading attendance...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         TOAST
+    ========================= -->
+
+    <div
+        class="toast"
+        id="toast"
+    ></div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ===================================================== -->
+
+    <script>
+
+
+        /* =====================================================
+           USER
+        ===================================================== */
+
+        let currentUser = null;
+
+        let USER_ID = null;
+
+
+
+        /* =====================================================
+           LOAD USER
+        ===================================================== */
+
+        function loadLoggedUser() {
+
+
+            const savedUser =
+                localStorage.getItem(
+                    "scmsUser"
+                );
+
+
+            if (!savedUser) {
+
+                window.location.href =
+                    "/login";
+
+                return false;
+
+            }
+
+
+            try {
+
+
+                currentUser =
+                    JSON.parse(
+                        savedUser
+                    );
+
+
+                /*
+                 * Main user ID
+                 */
+
+                USER_ID =
+                    Number(
+                        currentUser.id
+                    );
+
+
+                /*
+                 * Fallback
+                 */
+
+                if (
+                    !USER_ID &&
+                    currentUser.employee
+                ) {
+
+                    USER_ID =
+                        Number(
+                            currentUser
+                                .employee
+                                .user_id
+                        );
+
+                }
+
+
+                console.log(
+                    "Logged User:",
+                    currentUser
+                );
+
+
+                console.log(
+                    "Attendance User ID:",
+                    USER_ID
+                );
+
+
+                if (!USER_ID) {
+
+                    showToast(
+                        "User ID not found. Please login again.",
+                        "error"
+                    );
+
+                    return false;
+
+                }
+
+
+                const name =
+                    currentUser.name ||
+                    currentUser.employee?.name ||
+                    "Employee";
+
+
+                document.getElementById(
+                    "userName"
+                ).textContent =
+                    name;
+
+
+                return true;
+
+
+            }
+            catch (error) {
+
+
+                console.error(
+                    "User error:",
+                    error
+                );
+
+
+                localStorage.removeItem(
+                    "scmsUser"
+                );
+
+
+                window.location.href =
+                    "/login";
+
+
+                return false;
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           TODAY DATE
+        ===================================================== */
+
+        function showTodayDate() {
+
+
+            const now =
+                new Date();
+
+
+            document.getElementById(
+                "todayDate"
+            ).textContent =
+                now.toLocaleDateString(
+                    "en-IN",
+                    {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric"
+                    }
+                );
+
+        }
+
+
+
+        /* =====================================================
+           FORMAT TIME
+        ===================================================== */
+
+        function formatTime(
+            value
+        ) {
+
+
+            if (!value) {
+
+                return "—";
+
+            }
+
+
+            try {
+
+
+                let dateString =
+                    String(value);
+
+
+                /*
+                 * MySQL datetime:
+                 * 2026-08-23 15:47:30
+                 *
+                 * Convert to:
+                 * 2026-08-23T15:47:30
+                 */
+
+                if (
+                    dateString.includes(" ") &&
+                    !dateString.includes("T")
+                ) {
+
+                    dateString =
+                        dateString.replace(
+                            " ",
+                            "T"
+                        );
+
+                }
+
+
+                const date =
+                    new Date(
+                        dateString
+                    );
+
+
+                if (
+                    isNaN(
+                        date.getTime()
+                    )
+                ) {
+
+                    return String(
+                        value
+                    );
+
+                }
+
+
+                return date.toLocaleTimeString(
+                    "en-IN",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: true
+                    }
+                );
+
+
+            }
+            catch {
+
+                return String(
+                    value
+                );
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           FORMAT DATE
+        ===================================================== */
+
+        function formatDate(
+            value
+        ) {
+
+
+            if (!value) {
+
+                return "—";
+
+            }
+
+
+            try {
+
+
+                let dateString =
+                    String(value);
+
+
+                if (
+                    dateString.includes(" ") &&
+                    !dateString.includes("T")
+                ) {
+
+                    dateString =
+                        dateString.replace(
+                            " ",
+                            "T"
+                        );
+
+                }
+
+
+                const date =
+                    new Date(
+                        dateString
+                    );
+
+
+                if (
+                    isNaN(
+                        date.getTime()
+                    )
+                ) {
+
+                    return String(
+                        value
+                    );
+
+                }
+
+
+                return date.toLocaleDateString(
+                    "en-IN",
+                    {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                    }
+                );
+
+
+            }
+            catch {
+
+                return String(
+                    value
+                );
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           TOAST
+        ===================================================== */
+
+        function showToast(
+            message,
+            type = "success"
+        ) {
+
+
+            const toast =
+                document.getElementById(
+                    "toast"
+                );
+
+
+            toast.textContent =
+                message;
+
+
+            toast.className =
+                "toast show " +
+                type;
+
+
+            setTimeout(
+                function () {
+
+                    toast.className =
+                        "toast";
+
+                },
+                3000
+            );
+
+        }
+
+
+
+        /* =====================================================
+           UPDATE ATTENDANCE UI
+        ===================================================== */
+
+        function updateAttendanceUI(
+            attendance
+        ) {
+
+
+            const checkInButton =
+                document.getElementById(
+                    "checkInButton"
+                );
+
+
+            const checkOutButton =
+                document.getElementById(
+                    "checkOutButton"
+                );
+
+
+            const statusText =
+                document.getElementById(
+                    "statusText"
+                );
+
+
+            const statusDot =
+                document.getElementById(
+                    "statusDot"
+                );
+
+
+            const checkInTime =
+                document.getElementById(
+                    "checkInTime"
+                );
+
+
+            const checkOutTime =
+                document.getElementById(
+                    "checkOutTime"
+                );
+
+
+            const workingHours =
+                document.getElementById(
+                    "workingHours"
+                );
+
+
+
+            /* =========================
+               NO ATTENDANCE
+            ========================= */
+
+            if (!attendance) {
+
+
+                checkInButton.disabled =
+                    false;
+
+
+                checkOutButton.disabled =
+                    true;
+
+
+                statusText.textContent =
+                    "Not Checked In";
+
+
+                statusDot.className =
+                    "status-dot";
+
+
+                checkInTime.textContent =
+                    "—";
+
+
+                checkOutTime.textContent =
+                    "—";
+
+
+                workingHours.textContent =
+                    "0.00 h";
+
+
+                return;
+
+            }
+
+
+
+            /* =========================
+               CHECK IN
+            ========================= */
+
+            if (
+                attendance.check_in
+            ) {
+
+
+                checkInButton.disabled =
+                    true;
+
+
+                checkInTime.textContent =
+                    formatTime(
+                        attendance.check_in
+                    );
+
+
+                statusText.textContent =
+                    "Present";
+
+
+                statusDot.className =
+                    "status-dot present";
+
+            }
+            else {
+
+
+                checkInButton.disabled =
+                    false;
+
+            }
+
+
+
+            /* =========================
+               CHECK OUT
+            ========================= */
+
+            if (
+                attendance.check_out
+            ) {
+
+
+                checkOutButton.disabled =
+                    true;
+
+
+                checkOutTime.textContent =
+                    formatTime(
+                        attendance.check_out
+                    );
+
+
+                statusText.textContent =
+                    "Attendance Completed";
+
+
+                statusDot.className =
+                    "status-dot completed";
+
+            }
+            else {
+
+
+                checkOutButton.disabled =
+                    !attendance.check_in;
+
+
+                checkOutTime.textContent =
+                    "—";
+
+            }
+
+
+
+            /* =========================
+               WORKING HOURS
+            ========================= */
+
+            const hours =
+                Number(
+                    attendance.working_hours ||
+                    0
+                );
+
+
+            workingHours.textContent =
+                hours.toFixed(2) +
+                " h";
+
+        }
+
+
+
+        /* =====================================================
+           LOAD TODAY ATTENDANCE
+        ===================================================== */
+
+        async function loadTodayAttendance() {
+
+
+            if (!USER_ID) {
+
+                return;
+
+            }
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        `/api/attendance/${USER_ID}/today`,
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "Accept":
+                                    "application/json"
+                            },
+
+                            cache: "no-store"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "TODAY ATTENDANCE:",
+                    data
+                );
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.error ||
+                        data.message ||
+                        "Unable to load attendance"
+                    );
+
+                }
+
+
+                updateAttendanceUI(
+                    data.attendance
+                );
+
+
+            }
+            catch (error) {
+
+
+                console.error(
+                    "TODAY ATTENDANCE ERROR:",
+                    error
+                );
+
+
+                showToast(
+                    error.message,
+                    "error"
+                );
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           CHECK IN
+        ===================================================== */
+
+        async function checkIn() {
+
+
+            if (!USER_ID) {
+
+
+                showToast(
+                    "User ID not found. Please login again.",
+                    "error"
+                );
+
+
+                return;
+
+            }
+
+
+            const button =
+                document.getElementById(
+                    "checkInButton"
+                );
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "Checking In...";
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        `/api/attendance/${USER_ID}/check-in`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                "Accept":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({})
+                        }
+                    );
+
+
+                const contentType =
+                    response.headers.get(
+                        "content-type"
+                    ) || "";
+
+
+                /*
+                 * Flask should return JSON.
+                 */
+
+                if (
+                    !contentType.includes(
+                        "application/json"
+                    )
+                ) {
+
+
+                    const text =
+                        await response.text();
+
+
+                    console.error(
+                        "Server returned:",
+                        text
+                    );
+
+
+                    throw new Error(
+                        "Server returned HTML instead of JSON"
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "CHECK-IN RESPONSE:",
+                    data
+                );
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+
+                    throw new Error(
+                        data.error ||
+                        data.message ||
+                        "Check-in failed"
+                    );
+
+                }
+
+
+                showToast(
+                    "Check-in successful",
+                    "success"
+                );
+
+
+                updateAttendanceUI(
+                    data.attendance
+                );
+
+
+                await loadTodayAttendance();
+
+
+                await loadAttendanceHistory();
+
+
+            }
+            catch (error) {
+
+
+                console.error(
+                    "CHECK-IN ERROR:",
+                    error
+                );
+
+
+                showToast(
+                    "Check-in failed: " +
+                    error.message,
+                    "error"
+                );
+
+
+                button.disabled =
+                    false;
+
+            }
+            finally {
+
+
+                button.textContent =
+                    "Check In";
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           CHECK OUT
+        ===================================================== */
+
+        async function checkOut() {
+
+
+            if (!USER_ID) {
+
+
+                showToast(
+                    "User ID not found. Please login again.",
+                    "error"
+                );
+
+
+                return;
+
+            }
+
+
+            const button =
+                document.getElementById(
+                    "checkOutButton"
+                );
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "Checking Out...";
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        `/api/attendance/${USER_ID}/check-out`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                "Accept":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({})
+                        }
+                    );
+
+
+                const contentType =
+                    response.headers.get(
+                        "content-type"
+                    ) || "";
+
+
+                if (
+                    !contentType.includes(
+                        "application/json"
+                    )
+                ) {
+
+
+                    const text =
+                        await response.text();
+
+
+                    console.error(
+                        "Server returned:",
+                        text
+                    );
+
+
+                    throw new Error(
+                        "Server returned HTML instead of JSON"
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "CHECK-OUT RESPONSE:",
+                    data
+                );
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+
+                    throw new Error(
+                        data.error ||
+                        data.message ||
+                        "Check-out failed"
+                    );
+
+                }
+
+
+                showToast(
+                    "Check-out successful",
+                    "success"
+                );
+
+
+                updateAttendanceUI(
+                    data.attendance
+                );
+
+
+                await loadTodayAttendance();
+
+
+                await loadAttendanceHistory();
+
+
+            }
+            catch (error) {
+
+
+                console.error(
+                    "CHECK-OUT ERROR:",
+                    error
+                );
+
+
+                showToast(
+                    "Check-out failed: " +
+                    error.message,
+                    "error"
+                );
+
+
+                button.disabled =
+                    false;
+
+            }
+            finally {
+
+
+                button.textContent =
+                    "Check Out";
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           ATTENDANCE HISTORY
+           
+           IMPORTANT:
+           /history API use nahi kar rahe.
+           Working /today API se today's record
+           history table me show kar rahe hain.
+        ===================================================== */
+
+        async function loadAttendanceHistory() {
+
+
+            if (!USER_ID) {
+
+                return;
+
+            }
+
+
+            const body =
+                document.getElementById(
+                    "historyBody"
+                );
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        `/api/attendance/${USER_ID}/today`,
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "Accept":
+                                    "application/json"
+                            },
+
+                            cache: "no-store"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "ATTENDANCE HISTORY DATA:",
+                    data
+                );
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+
+                    throw new Error(
+                        data.error ||
+                        data.message ||
+                        "Unable to load attendance"
+                    );
+
+                }
+
+
+                /*
+                 * Today API ek object return karti hai.
+                 *
+                 * Table ke liye array bana rahe hain.
+                 */
+
+                const records =
+                    data.attendance
+                    ? [data.attendance]
+                    : [];
+
+
+                if (
+                    records.length === 0
+                ) {
+
+
+                    body.innerHTML = `
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                class="empty"
+                            >
+                                No attendance records found
+                            </td>
+
+                        </tr>
+
+                    `;
+
+
+                    return;
+
+                }
+
+
+
+                body.innerHTML =
+                    records
+                    .map(
+                        record => {
+
+
+                            const hours =
+                                Number(
+                                    record.working_hours ||
+                                    0
+                                );
+
+
+                            let badgeClass =
+                                "badge-present";
+
+
+                            const status =
+                                String(
+                                    record.status ||
+                                    "Present"
+                                );
+
+
+                            if (
+                                status
+                                    .toLowerCase()
+                                    .includes(
+                                        "completed"
+                                    )
+                            ) {
+
+                                badgeClass =
+                                    "badge-completed";
+
+                            }
+
+
+                            if (
+                                status
+                                    .toLowerCase()
+                                    .includes(
+                                        "absent"
+                                    )
+                            ) {
+
+                                badgeClass =
+                                    "badge-absent";
+
+                            }
+
+
+                            return `
+
+                                <tr>
+
+                                    <td>
+                                        ${formatDate(
+                                            record.attendance_date
+                                        )}
+                                    </td>
+
+
+                                    <td>
+                                        ${formatTime(
+                                            record.check_in
+                                        )}
+                                    </td>
+
+
+                                    <td>
+                                        ${formatTime(
+                                            record.check_out
+                                        )}
+                                    </td>
+
+
+                                    <td>
+                                        ${hours.toFixed(2)} h
+                                    </td>
+
+
+                                    <td>
+
+                                        <span
+                                            class="
+                                                badge
+                                                ${badgeClass}
+                                            "
+                                        >
+                                            ${escapeHtml(
+                                                status
+                                            )}
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            `;
+
+                        }
+                    )
+                    .join("");
+
+
+            }
+            catch (error) {
+
+
+                console.error(
+                    "ATTENDANCE HISTORY ERROR:",
+                    error
+                );
+
+
+                body.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            class="empty"
+                        >
+                            Unable to load attendance
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           ESCAPE HTML
+        ===================================================== */
+
+        function escapeHtml(
+            value
+        ) {
+
+
+            return String(
+                value ?? ""
+            )
+
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+
+            .replace(
+                /</g,
+                "&lt;"
+            )
+
+            .replace(
+                />/g,
+                "&gt;"
+            )
+
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+        }
+
+
+
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
+
+        function logout() {
+
+
+            localStorage.removeItem(
+                "scmsUser"
+            );
+
+
+            window.location.href =
+                "/login";
+
+        }
+
+
+
+        /* =====================================================
+           INITIALIZE
+        ===================================================== */
+
+        async function init() {
+
+
+            const valid =
+                loadLoggedUser();
+
+
+            if (!valid) {
+
+                return;
+
+            }
+
+
+            showTodayDate();
+
+
+            await loadTodayAttendance();
+
+
+            await loadAttendanceHistory();
+
+        }
+
+
+
+        /* =====================================================
+           START
+        ===================================================== */
+
+        init();
+
+
+    </script>
+
+
+</body>
+
+</html>

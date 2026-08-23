@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCMS - Projects</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#080b16;
+    color:white;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:250px;
+    background:#0d1120;
+    border-right:1px solid #20263a;
+    padding:25px 16px;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:5px 12px 40px;
+}
+
+.logo-box{
+    width:55px;
+    height:55px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#6c63ff,#00cfff);
+    font-size:20px;
+    font-weight:bold;
+}
+
+.logo-text{
+    font-size:23px;
+    font-weight:bold;
+}
+
+.menu-title{
+    color:#68728d;
+    font-size:11px;
+    margin:20px 12px 10px;
+}
+
+.menu a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 16px;
+    margin-bottom:6px;
+    color:#9ca5bd;
+    text-decoration:none;
+    border-radius:12px;
+}
+
+.menu a:hover,
+.menu a.active{
+    color:white;
+    background:rgba(108,99,255,.18);
+}
+
+.logout{
+    position:absolute;
+    bottom:20px;
+    left:16px;
+    right:16px;
+}
+
+.logout button{
+    width:100%;
+    padding:13px;
+    border:1px solid #303750;
+    border-radius:12px;
+    background:#0d1120;
+    color:#ff8585;
+    cursor:pointer;
+}
+
+.main{
+    margin-left:250px;
+    min-height:100vh;
+}
+
+.topbar{
+    height:82px;
+    padding:0 35px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid #20263a;
+}
+
+.title{
+    font-size:25px;
+    font-weight:bold;
+}
+
+.user{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.user-info{
+    text-align:right;
+}
+
+.user-name{
+    font-weight:bold;
+}
+
+.user-role{
+    color:#7d87a1;
+    font-size:12px;
+    margin-top:4px;
+}
+
+.avatar{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#6c63ff,#00cfff);
+    font-weight:bold;
+}
+
+.content{
+    padding:35px;
+}
+
+.heading-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.heading h1{
+    font-size:38px;
+    margin-bottom:8px;
+}
+
+.heading p{
+    color:#7f89a3;
+}
+
+.add-btn{
+    border:0;
+    padding:15px 22px;
+    border-radius:13px;
+    background:linear-gradient(135deg,#6c63ff,#00cfff);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.search{
+    width:350px;
+    max-width:100%;
+    padding:13px 16px;
+    background:#111628;
+    border:1px solid #20263a;
+    border-radius:11px;
+    color:white;
+    outline:none;
+}
+
+.project-total{
+    color:#77819b;
+}
+
+.table-card{
+    background:#111628;
+    border:1px solid #20263a;
+    border-radius:18px;
+    padding:22px;
+    overflow:hidden;
+}
+
+.table-wrapper{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    min-width:1100px;
+    border-collapse:collapse;
+}
+
+th{
+    padding:15px 12px;
+    text-align:left;
+    color:#68728d;
+    font-size:12px;
+    border-bottom:1px solid #20263a;
+}
+
+td{
+    padding:18px 12px;
+    color:#e2e6f0;
+    border-bottom:1px solid #1c2234;
+    font-size:13px;
+}
+
+tr:hover td{
+    background:rgba(255,255,255,.015);
+}
+
+.status{
+    display:inline-block;
+    padding:7px 11px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.pending{
+    background:rgba(255,190,60,.12);
+    color:#ffc85c;
+}
+
+.active-status{
+    background:rgba(0,220,130,.12);
+    color:#35e89b;
+}
+
+.completed{
+    background:rgba(0,190,255,.12);
+    color:#43d7ff;
+}
+
+.cancelled{
+    background:rgba(255,80,80,.12);
+    color:#ff8585;
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+}
+
+.edit-btn,
+.delete-btn,
+.assign-btn{
+    padding:9px 13px;
+    border:0;
+    border-radius:9px;
+    cursor:pointer;
+    font-size:12px;
+}
+
+.edit-btn{
+    background:rgba(108,99,255,.18);
+    color:#aaa4ff;
+}
+
+.delete-btn{
+    background:rgba(255,70,70,.12);
+    color:#ff8585;
+}
+
+.assign-btn{
+    background:rgba(0,207,255,.12);
+    color:#55dcff;
+}
+
+.empty{
+    padding:60px 20px!important;
+    text-align:center;
+    color:#68728d!important;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:3000;
+    background:rgba(0,0,0,.75);
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:650px;
+    max-width:100%;
+    max-height:90vh;
+    overflow-y:auto;
+    padding:28px;
+    border-radius:18px;
+    background:#111628;
+    border:1px solid #303750;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.close{
+    width:35px;
+    height:35px;
+    border:0;
+    border-radius:9px;
+    background:#20263a;
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:17px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.form-group.full{
+    grid-column:1/-1;
+}
+
+label{
+    color:#8992aa;
+    font-size:12px;
+}
+
+input,
+textarea,
+select{
+    width:100%;
+    padding:13px 14px;
+    border-radius:10px;
+    border:1px solid #2a3147;
+    background:#0b0f1d;
+    color:white;
+    outline:none;
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.form-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:25px;
+}
+
+.cancel-btn,
+.save-btn{
+    padding:12px 18px;
+    border:0;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.cancel-btn{
+    background:#20263a;
+    color:#b8bfd0;
+}
+
+.save-btn{
+    background:linear-gradient(135deg,#6c63ff,#00cfff);
+    color:white;
+    font-weight:bold;
+}
+
+.toast{
+    position:fixed;
+    right:25px;
+    bottom:25px;
+    padding:14px 20px;
+    border-radius:10px;
+    background:#151b2d;
+    border:1px solid #303750;
+    display:none;
+    z-index:5000;
+}
+
+.toast.show{
+    display:block;
+}
+
+@media(max-width:900px){
+
+    .sidebar{
+        width:80px;
+    }
+
+    .logo-text,
+    .menu-title{
+        display:none;
+    }
+
+    .menu a{
+        justify-content:center;
+    }
+
+    .main{
+        margin-left:80px;
+    }
+}
+
+@media(max-width:650px){
+
+    .content{
+        padding:20px;
+    }
+
+    .heading-row{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:20px;
+    }
+
+    .add-btn{
+        width:100%;
+    }
+
+    .toolbar{
+        flex-direction:column;
+        align-items:stretch;
+        gap:15px;
+    }
+
+    .search{
+        width:100%;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-group.full{
+        grid-column:auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <div class="logo">
+        <div class="logo-box">SC</div>
+        <div class="logo-text">SCMS</div>
+    </div>
+
+    <div class="menu-title">Main Menu</div>
+
+    <div class="menu">
+
+        <a href="/dashboard">
+            🏠 Dashboard
+        </a>
+
+        <a href="/employees">
+            👨‍💻 Employees
+        </a>
+
+        <a href="/projects" class="active">
+            📁 Projects
+        </a>
+
+        <a href="/tasks">
+            ✅ Tasks
+        </a>
+
+    </div>
+
+    <div class="menu-title">Company</div>
+
+    <div class="menu">
+
+        <a href="/about">
+            ℹ️ About
+        </a>
+
+        <a href="/settings">
+            ⚙️ Settings
+        </a>
+
+    </div>
+
+    <div class="logout">
+        <button onclick="logout()">
+            🚪 Logout
+        </button>
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+<main class="main">
+
+<header class="topbar">
+
+    <div class="title">
+        Projects
+    </div>
+
+    <div class="user">
+
+        <div class="user-info">
+
+            <div class="user-name" id="userName">
+                Mayur Verma
+            </div>
+
+            <div class="user-role" id="userRole">
+                Administrator
+            </div>
+
+        </div>
+
+        <div class="avatar" id="userAvatar">
+            M
+        </div>
+
+    </div>
+
+</header>
+
+
+<section class="content">
+
+<div class="heading-row">
+
+    <div class="heading">
+
+        <h1>
+            Project Management
+        </h1>
+
+        <p>
+            Manage your company's projects.
+        </p>
+
+    </div>
+
+    <button
+        class="add-btn"
+        onclick="openAddModal()"
+    >
+        + Add Project
+    </button>
+
+</div>
+
+
+<div class="toolbar">
+
+    <input
+        type="text"
+        id="searchInput"
+        class="search"
+        placeholder="🔍 Search project..."
+        oninput="searchProjects()"
+    >
+
+    <div
+        class="project-total"
+        id="projectTotal"
+    >
+        Loading projects...
+    </div>
+
+</div>
+
+
+<div class="table-card">
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Project</th>
+<th>Client</th>
+<th>Start Date</th>
+<th>Deadline</th>
+<th>Status</th>
+<th>Assign Employee</th>
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody id="projectTable">
+
+<tr>
+
+<td
+    colspan="7"
+    class="empty"
+>
+    ⏳ Loading projects...
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<!-- ADD / EDIT PROJECT MODAL -->
+
+<div
+    class="modal"
+    id="projectModal"
+>
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2 id="modalTitle">
+Add Project
+</h2>
+
+<button
+    class="close"
+    onclick="closeModal()"
+>
+×
+</button>
+
+</div>
+
+
+<form
+    id="projectForm"
+    onsubmit="saveProject(event)"
+>
+
+<div class="form-grid">
+
+<div class="form-group">
+
+<label>
+Project Name *
+</label>
+
+<input
+    type="text"
+    id="project_name"
+    required
+    placeholder="Website Development"
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Client Name
+</label>
+
+<input
+    type="text"
+    id="client_name"
+    placeholder="Client name"
+>
+
+</div>
+
+
+<div class="form-group full">
+
+<label>
+Description
+</label>
+
+<textarea
+    id="description"
+    placeholder="Project description..."
+></textarea>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Start Date
+</label>
+
+<input
+    type="date"
+    id="start_date"
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Deadline
+</label>
+
+<input
+    type="date"
+    id="deadline"
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Status
+</label>
+
+<select id="status">
+
+<option value="Pending">
+Pending
+</option>
+
+<option value="Active">
+Active
+</option>
+
+<option value="Completed">
+Completed
+</option>
+
+<option value="Cancelled">
+Cancelled
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="form-actions">
+
+<button
+    type="button"
+    class="cancel-btn"
+    onclick="closeModal()"
+>
+Cancel
+</button>
+
+<button
+    type="submit"
+    class="save-btn"
+>
+Save Project
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+
+<!-- ASSIGN EMPLOYEE MODAL -->
+
+<div
+    class="modal"
+    id="assignModal"
+>
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2>
+Assign Employee
+</h2>
+
+<button
+    class="close"
+    onclick="closeAssignModal()"
+>
+×
+</button>
+
+</div>
+
+
+<p style="color:#8992aa;margin-bottom:20px;">
+
+Project:
+
+<strong
+    id="assignProjectName"
+    style="color:white;"
+>
+-
+</strong>
+
+</p>
+
+
+<div class="form-group">
+
+<label>
+Select Employee *
+</label>
+
+<select id="assignEmployee">
+
+<option value="">
+Loading employees...
+</option>
+
+</select>
+
+</div>
+
+
+<div class="form-actions">
+
+<button
+    class="cancel-btn"
+    onclick="closeAssignModal()"
+>
+Cancel
+</button>
+
+<button
+    class="save-btn"
+    onclick="assignProject()"
+>
+Assign Employee
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
+
+<script>
+
+/* ============================
+   USER
+============================ */
+
+const savedUser =
+    localStorage.getItem("scmsUser");
+
+if(!savedUser){
+
+    window.location.href="/login";
+
+}
+
+let user = null;
+
+try{
+
+    user = JSON.parse(savedUser);
+
+}catch(error){
+
+    localStorage.removeItem("scmsUser");
+
+    window.location.href="/login";
+
+}
+
+
+if(user){
+
+    document.getElementById("userName")
+        .textContent =
+        user.name || "Mayur Verma";
+
+    document.getElementById("userRole")
+        .textContent =
+        user.role || "Administrator";
+
+    document.getElementById("userAvatar")
+        .textContent =
+        (user.name || "M")
+        .charAt(0)
+        .toUpperCase();
+
+}
+
+
+/* ============================
+   VARIABLES
+============================ */
+
+let projects = [];
+
+let editProjectId = null;
+
+let assignProjectId = null;
+
+
+/* ============================
+   LOAD PROJECTS
+============================ */
+
+async function loadProjects(){
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/projects",
+                {
+                    method:"GET",
+                    cache:"no-store"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if(!response.ok || !data.success){
+
+            throw new Error(
+                data.message ||
+                "Unable to load projects"
+            );
+
+        }
+
+        projects =
+            data.projects || [];
+
+        renderProjects(projects);
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        document.getElementById(
+            "projectTable"
+        ).innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="empty"
+                >
+                    ⚠️ Unable to load projects.
+                    <br><br>
+                    ${escapeHtml(error.message)}
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+/* ============================
+   RENDER PROJECTS
+============================ */
+
+function renderProjects(list){
+
+    const table =
+        document.getElementById(
+            "projectTable"
+        );
+
+    document.getElementById(
+        "projectTotal"
+    ).textContent =
+        `${list.length} project(s)`;
+
+
+    if(!list.length){
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="empty"
+                >
+                    <div style="font-size:40px;">
+                        📁
+                    </div>
+
+                    <br>
+
+                    No projects found.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    table.innerHTML = "";
+
+
+    list.forEach(project => {
+
+        let statusClass =
+            "pending";
+
+        if(project.status === "Active"){
+
+            statusClass =
+                "active-status";
+
+        }
+        else if(project.status === "Completed"){
+
+            statusClass =
+                "completed";
+
+        }
+        else if(project.status === "Cancelled"){
+
+            statusClass =
+                "cancelled";
+
+        }
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>
+
+                <strong>
+                    ${escapeHtml(
+                        project.project_name || "-"
+                    )}
+                </strong>
+
+                ${
+                    project.description
+                    ?
+                    `
+                    <div
+                        style="
+                        color:#68728d;
+                        margin-top:5px;
+                        max-width:300px;
+                        "
+                    >
+                        ${escapeHtml(
+                            project.description
+                        )}
+                    </div>
+                    `
+                    :
+                    ""
+                }
+
+            </td>
+
+
+            <td>
+                ${escapeHtml(
+                    project.client_name || "-"
+                )}
+            </td>
+
+
+            <td>
+                ${escapeHtml(
+                    project.start_date || "-"
+                )}
+            </td>
+
+
+            <td>
+                ${escapeHtml(
+                    project.deadline || "-"
+                )}
+            </td>
+
+
+            <td>
+
+                <span
+                    class="status ${statusClass}"
+                >
+                    ${escapeHtml(
+                        project.status || "Pending"
+                    )}
+                </span>
+
+            </td>
+
+
+            <td>
+
+                <button
+                    class="assign-btn"
+                    onclick="openAssignModal(${project.id})"
+                >
+                    👤 Assign Employee
+                </button>
+
+                ${
+                    project.employee_name
+                    ?
+                    `
+                    <div
+                        style="
+                        color:#35e89b;
+                        margin-top:7px;
+                        font-size:11px;
+                        "
+                    >
+                        Assigned:
+                        ${escapeHtml(
+                            project.employee_name
+                        )}
+                    </div>
+                    `
+                    :
+                    ""
+                }
+
+            </td>
+
+
+            <td>
+
+                <div class="actions">
+
+                    <button
+                        class="edit-btn"
+                        onclick="editProject(${project.id})"
+                    >
+                        Edit
+                    </button>
+
+                    <button
+                        class="delete-btn"
+                        onclick="deleteProject(${project.id})"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+
+            </td>
+
+        `;
+
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+/* ============================
+   ADD PROJECT
+============================ */
+
+function openAddModal(){
+
+    editProjectId = null;
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Add Project";
+
+    document.getElementById(
+        "projectForm"
+    ).reset();
+
+    document.getElementById(
+        "status"
+    ).value =
+        "Pending";
+
+    document.getElementById(
+        "projectModal"
+    ).classList.add("show");
+
+}
+
+
+function closeModal(){
+
+    document.getElementById(
+        "projectModal"
+    ).classList.remove("show");
+
+}
+
+
+/* ============================
+   EDIT PROJECT
+============================ */
+
+function editProject(id){
+
+    const project =
+        projects.find(
+            p => Number(p.id) === Number(id)
+        );
+
+    if(!project){
+
+        showToast(
+            "Project not found"
+        );
+
+        return;
+
+    }
+
+
+    editProjectId =
+        Number(id);
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Project";
+
+
+    document.getElementById(
+        "project_name"
+    ).value =
+        project.project_name || "";
+
+
+    document.getElementById(
+        "client_name"
+    ).value =
+        project.client_name || "";
+
+
+    document.getElementById(
+        "description"
+    ).value =
+        project.description || "";
+
+
+    document.getElementById(
+        "start_date"
+    ).value =
+        project.start_date || "";
+
+
+    document.getElementById(
+        "deadline"
+    ).value =
+        project.deadline || "";
+
+
+    document.getElementById(
+        "status"
+    ).value =
+        project.status || "Pending";
+
+
+    document.getElementById(
+        "projectModal"
+    ).classList.add("show");
+
+}
+
+
+/* ============================
+   SAVE PROJECT
+============================ */
+
+async function saveProject(event){
+
+    event.preventDefault();
+
+
+    const projectData = {
+
+        project_name:
+            document.getElementById(
+                "project_name"
+            ).value.trim(),
+
+        client_name:
+            document.getElementById(
+                "client_name"
+            ).value.trim(),
+
+        description:
+            document.getElementById(
+                "description"
+            ).value.trim(),
+
+        start_date:
+            document.getElementById(
+                "start_date"
+            ).value,
+
+        deadline:
+            document.getElementById(
+                "deadline"
+            ).value,
+
+        status:
+            document.getElementById(
+                "status"
+            ).value
+
+    };
+
+
+    try{
+
+        let url =
+            "/api/projects";
+
+        let method =
+            "POST";
+
+
+        if(editProjectId){
+
+            url =
+                `/api/projects/${editProjectId}`;
+
+            method =
+                "PUT";
+
+        }
+
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method:method,
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            projectData
+                        )
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok || !data.success){
+
+            throw new Error(
+                data.message ||
+                "Unable to save project"
+            );
+
+        }
+
+
+        const wasEdit =
+            Boolean(editProjectId);
+
+
+        editProjectId = null;
+
+
+        closeModal();
+
+
+        showToast(
+            wasEdit
+            ?
+            "Project updated successfully"
+            :
+            "Project added successfully"
+        );
+
+
+        await loadProjects();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+            error.message
+        );
+
+    }
+
+}
+
+
+/* ============================
+   ASSIGN EMPLOYEE
+============================ */
+
+async function openAssignModal(projectId){
+
+    const project =
+        projects.find(
+            p => Number(p.id) === Number(projectId)
+        );
+
+
+    if(!project){
+
+        showToast(
+            "Project not found"
+        );
+
+        return;
+
+    }
+
+
+    assignProjectId =
+        Number(projectId);
+
+
+    document.getElementById(
+        "assignProjectName"
+    ).textContent =
+        project.project_name || "-";
+
+
+    document.getElementById(
+        "assignModal"
+    ).classList.add("show");
+
+
+    await loadEmployees();
+
+}
+
+
+async function loadEmployees(){
+
+    const select =
+        document.getElementById(
+            "assignEmployee"
+        );
+
+
+    select.innerHTML = `
+
+        <option value="">
+            Loading employees...
+        </option>
+
+    `;
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/employees",
+                {
+                    method:"GET",
+                    cache:"no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok || !data.success){
+
+            throw new Error(
+                data.message ||
+                "Unable to load employees"
+            );
+
+        }
+
+
+        const employees =
+            data.employees || [];
+
+
+        select.innerHTML = `
+
+            <option value="">
+                Select Employee
+            </option>
+
+        `;
+
+
+        employees.forEach(employee => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                employee.id;
+
+
+            option.textContent =
+                `${employee.name || "Employee"}`
+                +
+                ` (${employee.employee_code || employee.id})`;
+
+
+            select.appendChild(option);
+
+        });
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        select.innerHTML = `
+
+            <option value="">
+                Unable to load employees
+            </option>
+
+        `;
+
+        showToast(
+            error.message
+        );
+
+    }
+
+}
+
+
+async function assignProject(){
+
+    if(!assignProjectId){
+
+        showToast(
+            "Project not selected"
+        );
+
+        return;
+
+    }
+
+
+    const employeeId =
+        document.getElementById(
+            "assignEmployee"
+        ).value;
+
+
+    if(!employeeId){
+
+        showToast(
+            "Please select Rahul or another employee"
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                `/api/projects/${assignProjectId}/assign`,
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            employee_id:
+                                Number(employeeId)
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok || !data.success){
+
+            throw new Error(
+                data.message ||
+                "Unable to assign project"
+            );
+
+        }
+
+
+        closeAssignModal();
+
+
+        showToast(
+            data.message ||
+            "Project assigned successfully"
+        );
+
+
+        await loadProjects();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+            error.message
+        );
+
+    }
+
+}
+
+
+function closeAssignModal(){
+
+    assignProjectId =
+        null;
+
+    document.getElementById(
+        "assignModal"
+    ).classList.remove("show");
+
+}
+
+
+/* ============================
+   DELETE
+============================ */
+
+async function deleteProject(id){
+
+    const project =
+        projects.find(
+            p => Number(p.id) === Number(id)
+        );
+
+
+    if(!project){
+        return;
+    }
+
+
+    if(
+        !confirm(
+            `Delete project "${project.project_name}"?`
+        )
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                `/api/projects/${id}`,
+                {
+                    method:"DELETE"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok || !data.success){
+
+            throw new Error(
+                data.message ||
+                "Unable to delete project"
+            );
+
+        }
+
+
+        showToast(
+            "Project deleted successfully"
+        );
+
+
+        await loadProjects();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+            error.message
+        );
+
+    }
+
+}
+
+
+/* ============================
+   SEARCH
+============================ */
+
+function searchProjects(){
+
+    const search =
+        document.getElementById(
+            "searchInput"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    if(!search){
+
+        renderProjects(projects);
+
+        return;
+
+    }
+
+
+    const filtered =
+        projects.filter(project => {
+
+            return (
+
+                String(
+                    project.project_name || ""
+                )
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                String(
+                    project.client_name || ""
+                )
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                String(
+                    project.status || ""
+                )
+                .toLowerCase()
+                .includes(search)
+
+            );
+
+        });
+
+
+    renderProjects(filtered);
+
+}
+
+
+/* ============================
+   TOAST
+============================ */
+
+function showToast(message){
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    setTimeout(() => {
+
+        toast.classList.remove(
+            "show"
+        );
+
+    },2500);
+
+}
+
+
+/* ============================
+   ESCAPE HTML
+============================ */
+
+function escapeHtml(value){
+
+    return String(value)
+
+        .replace(/&/g,"&amp;")
+
+        .replace(/</g,"&lt;")
+
+        .replace(/>/g,"&gt;")
+
+        .replace(/"/g,"&quot;")
+
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* ============================
+   LOGOUT
+============================ */
+
+function logout(){
+
+    localStorage.removeItem(
+        "scmsUser"
+    );
+
+    window.location.href =
+        "/login";
+
+}
+
+
+/* ============================
+   CLOSE ON OUTSIDE CLICK
+============================ */
+
+document.getElementById(
+    "projectModal"
+).addEventListener(
+    "click",
+    function(e){
+
+        if(e.target === this){
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+document.getElementById(
+    "assignModal"
+).addEventListener(
+    "click",
+    function(e){
+
+        if(e.target === this){
+
+            closeAssignModal();
+
+        }
+
+    }
+);
+
+
+/* ============================
+   START
+============================ */
+
+loadProjects();
+
+</script>
+
+</body>
+</html>

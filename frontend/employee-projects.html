@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Projects - SCMS</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#080b16;
+    color:white;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:250px;
+    padding:25px 16px;
+    background:#0d1120;
+    border-right:1px solid #20263a;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:5px 12px 40px;
+}
+
+.logo-box{
+    width:55px;
+    height:55px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:16px;
+    background:linear-gradient(135deg,#6c63ff,#00cfff);
+    font-size:20px;
+    font-weight:bold;
+}
+
+.logo-text{
+    font-size:23px;
+    font-weight:bold;
+}
+
+.menu-title{
+    color:#68728d;
+    font-size:11px;
+    margin:20px 12px 10px;
+    text-transform:uppercase;
+}
+
+.menu a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 16px;
+    color:#9ca5bd;
+    text-decoration:none;
+    border-radius:12px;
+    margin-bottom:6px;
+}
+
+.menu a:hover,
+.menu a.active{
+    color:white;
+    background:rgba(108,99,255,.18);
+}
+
+.logout{
+    position:absolute;
+    left:16px;
+    right:16px;
+    bottom:20px;
+}
+
+.logout button{
+    width:100%;
+    padding:13px;
+    border:1px solid #303750;
+    border-radius:12px;
+    background:#0d1120;
+    color:#ff8585;
+    cursor:pointer;
+}
+
+/* MAIN */
+
+.main{
+    margin-left:250px;
+    min-height:100vh;
+}
+
+/* TOPBAR */
+
+.topbar{
+    height:82px;
+    padding:0 35px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid #20263a;
+}
+
+.title{
+    font-size:26px;
+    font-weight:bold;
+}
+
+.user{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.user-text{
+    text-align:right;
+}
+
+.user-name{
+    font-weight:bold;
+}
+
+.user-role{
+    color:#7d87a1;
+    font-size:12px;
+    margin-top:4px;
+}
+
+.avatar{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#6c63ff,#00cfff);
+    font-weight:bold;
+}
+
+/* CONTENT */
+
+.content{
+    padding:40px;
+}
+
+.heading{
+    margin-bottom:30px;
+}
+
+.heading h1{
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+.heading p{
+    color:#8791aa;
+}
+
+/* PROJECT GRID */
+
+.projects{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.project{
+    padding:25px;
+    background:#111628;
+    border:1px solid #20263a;
+    border-radius:18px;
+    transition:.2s;
+}
+
+.project:hover{
+    transform:translateY(-3px);
+    border-color:#6c63ff;
+}
+
+.project-icon{
+    font-size:34px;
+    margin-bottom:15px;
+}
+
+.project h2{
+    margin-bottom:10px;
+    word-break:break-word;
+}
+
+.project-description{
+    color:#8791aa;
+    line-height:1.5;
+    margin-bottom:18px;
+}
+
+.info{
+    color:#aeb6c9;
+    font-size:14px;
+    margin-top:9px;
+}
+
+.status{
+    display:inline-block;
+    margin-top:17px;
+    padding:7px 13px;
+    border-radius:20px;
+    background:rgba(108,99,255,.15);
+    color:#a7a0ff;
+    font-size:12px;
+}
+
+.empty{
+    grid-column:1/-1;
+    padding:60px 30px;
+    text-align:center;
+    background:#111628;
+    border:1px solid #20263a;
+    border-radius:18px;
+    color:#8791aa;
+}
+
+.empty-icon{
+    font-size:50px;
+    margin-bottom:15px;
+}
+
+.error{
+    grid-column:1/-1;
+    padding:25px;
+    background:#24131a;
+    border:1px solid #632536;
+    border-radius:12px;
+    color:#ff9caa;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+
+    .projects{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:800px){
+
+    .sidebar{
+        width:80px;
+    }
+
+    .logo-text,
+    .menu-title{
+        display:none;
+    }
+
+    .menu a{
+        justify-content:center;
+        font-size:0;
+    }
+
+    .main{
+        margin-left:80px;
+    }
+
+    .projects{
+        grid-template-columns:1fr;
+    }
+
+    .content{
+        padding:25px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-box">
+            SC
+        </div>
+
+        <div class="logo-text">
+            SCMS
+        </div>
+
+    </div>
+
+
+    <div class="menu-title">
+        Employee Menu
+    </div>
+
+
+    <div class="menu">
+
+        <a href="/employee-dashboard">
+            🏠 Dashboard
+        </a>
+
+        <a href="/employee-profile">
+            👤 My Profile
+        </a>
+
+        <a
+            href="/employee-projects"
+            class="active"
+        >
+            📁 My Projects
+        </a>
+
+        <a href="/employee-tasks">
+            ✅ My Tasks
+        </a>
+
+    </div>
+
+
+    <div class="logout">
+
+        <button onclick="logout()">
+            🚪 Logout
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="title">
+            My Projects
+        </div>
+
+
+        <div class="user">
+
+            <div class="user-text">
+
+                <div
+                    class="user-name"
+                    id="userName"
+                >
+                    Employee
+                </div>
+
+                <div class="user-role">
+                    Employee
+                </div>
+
+            </div>
+
+
+            <div
+                class="avatar"
+                id="avatar"
+            >
+                E
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- CONTENT -->
+
+    <section class="content">
+
+
+        <div class="heading">
+
+            <h1>
+                My Projects
+            </h1>
+
+            <p>
+                Projects assigned to you.
+            </p>
+
+        </div>
+
+
+        <div
+            class="projects"
+            id="projects"
+        >
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    ⏳
+                </div>
+
+                Loading projects...
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<script>
+
+/* =====================================================
+   LOGIN CHECK
+===================================================== */
+
+const savedUser =
+    localStorage.getItem("scmsUser");
+
+
+if(!savedUser){
+
+    window.location.href =
+        "/login";
+
+}
+
+
+/* =====================================================
+   LOAD PROJECTS
+===================================================== */
+
+async function loadProjects(){
+
+    const container =
+        document.getElementById(
+            "projects"
+        );
+
+
+    try{
+
+        const user =
+            JSON.parse(savedUser);
+
+
+        if(!user.id){
+
+            throw new Error(
+                "User ID not found"
+            );
+
+        }
+
+
+        /* USER NAME */
+
+        const name =
+            user.name ||
+            "Employee";
+
+
+        document.getElementById(
+            "userName"
+        ).textContent =
+            name;
+
+
+        document.getElementById(
+            "avatar"
+        ).textContent =
+            name
+                .charAt(0)
+                .toUpperCase();
+
+
+        /* API */
+
+        const response =
+            await fetch(
+                `/api/employee/projects/${user.id}`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Employee Projects:",
+            data
+        );
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.message ||
+                "Unable to load projects"
+            );
+
+        }
+
+
+        /* NO PROJECT */
+
+        if(
+            !data.projects ||
+            data.projects.length === 0
+        ){
+
+            container.innerHTML = `
+
+                <div class="empty">
+
+                    <div class="empty-icon">
+                        📁
+                    </div>
+
+                    <h2>
+                        No Projects Assigned
+                    </h2>
+
+                    <p style="margin-top:10px;">
+                        No project has been assigned
+                        to you yet.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        /* PROJECTS */
+
+        container.innerHTML =
+            data.projects
+            .map(project => `
+
+                <div class="project">
+
+                    <div class="project-icon">
+                        📁
+                    </div>
+
+                    <h2>
+                        ${escapeHtml(
+                            project.project_name
+                        )}
+                    </h2>
+
+                    <div class="project-description">
+                        ${escapeHtml(
+                            project.description ||
+                            "No description available."
+                        )}
+                    </div>
+
+                    <div class="info">
+                        👤 Client:
+                        ${escapeHtml(
+                            project.client_name ||
+                            "-"
+                        )}
+                    </div>
+
+                    <div class="info">
+                        📅 Start Date:
+                        ${escapeHtml(
+                            project.start_date ||
+                            "-"
+                        )}
+                    </div>
+
+                    <div class="info">
+                        ⏰ Deadline:
+                        ${escapeHtml(
+                            project.deadline ||
+                            "-"
+                        )}
+                    </div>
+
+                    <span class="status">
+                        ${escapeHtml(
+                            project.status ||
+                            "Pending"
+                        )}
+                    </span>
+
+                </div>
+
+            `)
+            .join("");
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Project Error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="error">
+
+                ❌ ${escapeHtml(
+                    error.message
+                )}
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   HTML SECURITY
+===================================================== */
+
+function escapeHtml(value){
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.textContent =
+        value == null
+        ? ""
+        : String(value);
+
+    return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+    localStorage.removeItem(
+        "scmsUser"
+    );
+
+    window.location.href =
+        "/login";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadProjects();
+
+</script>
+
+
+</body>
+
+</html>

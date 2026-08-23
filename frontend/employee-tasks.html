@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>My Tasks - SCMS</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#080b16;
+    color:white;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:250px;
+    padding:25px 16px;
+    background:#0d1120;
+    border-right:1px solid #20263a;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:5px 12px 40px;
+}
+
+.logo-box{
+    width:55px;
+    height:55px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:16px;
+    background:linear-gradient(135deg,#6c63ff,#00cfff);
+    font-weight:bold;
+    font-size:20px;
+}
+
+.logo-text{
+    font-size:23px;
+    font-weight:bold;
+}
+
+.menu-title{
+    color:#68728d;
+    font-size:11px;
+    margin:20px 12px 10px;
+    text-transform:uppercase;
+}
+
+.menu a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 16px;
+    color:#9ca5bd;
+    text-decoration:none;
+    border-radius:12px;
+    margin-bottom:6px;
+}
+
+.menu a:hover,
+.menu a.active{
+    color:white;
+    background:rgba(108,99,255,.18);
+}
+
+/* ================= LOGOUT ================= */
+
+.logout{
+    position:absolute;
+    left:16px;
+    right:16px;
+    bottom:20px;
+}
+
+.logout button{
+    width:100%;
+    padding:13px;
+    border:1px solid #303750;
+    border-radius:12px;
+    background:#0d1120;
+    color:#ff8585;
+    cursor:pointer;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    margin-left:250px;
+    min-height:100vh;
+}
+
+/* ================= TOPBAR ================= */
+
+.topbar{
+    height:82px;
+    padding:0 35px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid #20263a;
+}
+
+.title{
+    font-size:26px;
+    font-weight:bold;
+}
+
+.user{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.user-text{
+    text-align:right;
+}
+
+.user-name{
+    font-weight:bold;
+}
+
+.user-role{
+    color:#7d87a1;
+    font-size:12px;
+    margin-top:4px;
+}
+
+.avatar{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#6c63ff,#00cfff);
+    font-weight:bold;
+}
+
+/* ================= CONTENT ================= */
+
+.content{
+    padding:40px;
+}
+
+.heading{
+    margin-bottom:30px;
+}
+
+.heading h1{
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+.heading p{
+    color:#8791aa;
+}
+
+/* ================= TASK GRID ================= */
+
+.tasks{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.task{
+    padding:25px;
+    background:#111628;
+    border:1px solid #20263a;
+    border-radius:18px;
+    transition:.2s;
+}
+
+.task:hover{
+    transform:translateY(-3px);
+    border-color:#6c63ff;
+}
+
+.task-icon{
+    font-size:34px;
+    margin-bottom:15px;
+}
+
+.task h2{
+    margin-bottom:10px;
+    word-break:break-word;
+}
+
+.task-description{
+    color:#8791aa;
+    line-height:1.5;
+    margin-bottom:18px;
+}
+
+.info{
+    color:#aeb6c9;
+    font-size:14px;
+    margin-top:9px;
+}
+
+/* ================= BADGES ================= */
+
+.badges{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:17px;
+}
+
+.badge{
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:12px;
+}
+
+.priority-low{
+    background:rgba(0,207,255,.12);
+    color:#69dfff;
+}
+
+.priority-medium{
+    background:rgba(255,193,7,.12);
+    color:#ffd75a;
+}
+
+.priority-high{
+    background:rgba(255,75,75,.12);
+    color:#ff8585;
+}
+
+.status-pending{
+    background:rgba(108,99,255,.15);
+    color:#aaa4ff;
+}
+
+.status-progress{
+    background:rgba(255,193,7,.12);
+    color:#ffd75a;
+}
+
+.status-completed{
+    background:rgba(0,220,130,.12);
+    color:#55e8a5;
+}
+
+/* ================= EMPTY ================= */
+
+.empty{
+    grid-column:1/-1;
+    padding:60px 30px;
+    text-align:center;
+    background:#111628;
+    border:1px solid #20263a;
+    border-radius:18px;
+    color:#8791aa;
+}
+
+.empty-icon{
+    font-size:50px;
+    margin-bottom:15px;
+}
+
+/* ================= ERROR ================= */
+
+.error{
+    grid-column:1/-1;
+    padding:25px;
+    background:#24131a;
+    border:1px solid #632536;
+    border-radius:12px;
+    color:#ff9caa;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:1000px){
+
+    .tasks{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:800px){
+
+    .sidebar{
+        width:80px;
+    }
+
+    .logo-text,
+    .menu-title{
+        display:none;
+    }
+
+    .menu a{
+        justify-content:center;
+        font-size:0;
+    }
+
+    .main{
+        margin-left:80px;
+    }
+
+    .tasks{
+        grid-template-columns:1fr;
+    }
+
+    .content{
+        padding:25px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-box">
+            SC
+        </div>
+
+        <div class="logo-text">
+            SCMS
+        </div>
+
+    </div>
+
+
+    <div class="menu-title">
+        Employee Menu
+    </div>
+
+
+    <div class="menu">
+
+        <a href="/employee-dashboard">
+            🏠 Dashboard
+        </a>
+
+        <a href="/employee-profile">
+            👤 My Profile
+        </a>
+
+        <a href="/employee-projects">
+            📁 My Projects
+        </a>
+
+        <a
+            href="/employee-tasks"
+            class="active"
+        >
+            ✅ My Tasks
+        </a>
+
+    </div>
+
+
+    <div class="logout">
+
+        <button onclick="logout()">
+            🚪 Logout
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="title">
+            My Tasks
+        </div>
+
+
+        <div class="user">
+
+            <div class="user-text">
+
+                <div
+                    class="user-name"
+                    id="userName"
+                >
+                    Employee
+                </div>
+
+                <div class="user-role">
+                    Employee
+                </div>
+
+            </div>
+
+
+            <div
+                class="avatar"
+                id="avatar"
+            >
+                E
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- CONTENT -->
+
+    <section class="content">
+
+
+        <div class="heading">
+
+            <h1>
+                My Tasks
+            </h1>
+
+            <p>
+                Tasks assigned to you.
+            </p>
+
+        </div>
+
+
+        <div
+            class="tasks"
+            id="tasks"
+        >
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    ⏳
+                </div>
+
+                Loading tasks...
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<script>
+
+/* ================= LOGIN CHECK ================= */
+
+const savedUser =
+    localStorage.getItem("scmsUser");
+
+
+if(!savedUser){
+
+    window.location.href =
+        "/login";
+
+}
+
+
+/* ================= LOAD TASKS ================= */
+
+async function loadTasks(){
+
+    const container =
+        document.getElementById("tasks");
+
+
+    try{
+
+        const user =
+            JSON.parse(savedUser);
+
+
+        if(!user.id){
+
+            throw new Error(
+                "User ID not found"
+            );
+
+        }
+
+
+        /* USER */
+
+        const name =
+            user.name ||
+            "Employee";
+
+
+        document.getElementById(
+            "userName"
+        ).textContent =
+            name;
+
+
+        document.getElementById(
+            "avatar"
+        ).textContent =
+            name
+                .charAt(0)
+                .toUpperCase();
+
+
+        /* API */
+
+        const response =
+            await fetch(
+                `/api/employee/tasks/${user.id}`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Employee Tasks:",
+            data
+        );
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.message ||
+                "Unable to load tasks"
+            );
+
+        }
+
+
+        /* NO TASK */
+
+        if(
+            !data.tasks ||
+            data.tasks.length === 0
+        ){
+
+            container.innerHTML = `
+
+                <div class="empty">
+
+                    <div class="empty-icon">
+                        ✅
+                    </div>
+
+                    <h2>
+                        No Tasks Assigned
+                    </h2>
+
+                    <p style="margin-top:10px;">
+                        No task has been assigned
+                        to you yet.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        /* TASKS */
+
+        container.innerHTML =
+            data.tasks
+            .map(task => {
+
+                let priorityClass =
+                    "priority-medium";
+
+                if(task.priority === "Low"){
+                    priorityClass =
+                        "priority-low";
+                }
+
+                if(task.priority === "High"){
+                    priorityClass =
+                        "priority-high";
+                }
+
+
+                let statusClass =
+                    "status-pending";
+
+                if(task.status === "In Progress"){
+                    statusClass =
+                        "status-progress";
+                }
+
+                if(task.status === "Completed"){
+                    statusClass =
+                        "status-completed";
+                }
+
+
+                return `
+
+                    <div class="task">
+
+                        <div class="task-icon">
+                            ✅
+                        </div>
+
+                        <h2>
+                            ${escapeHtml(
+                                task.title
+                            )}
+                        </h2>
+
+                        <div class="task-description">
+                            ${escapeHtml(
+                                task.description ||
+                                "No description available."
+                            )}
+                        </div>
+
+                        <div class="info">
+                            📁 Project:
+                            ${escapeHtml(
+                                task.project_name ||
+                                "-"
+                            )}
+                        </div>
+
+                        <div class="info">
+                            📅 Deadline:
+                            ${escapeHtml(
+                                task.deadline ||
+                                "-"
+                            )}
+                        </div>
+
+                        <div class="badges">
+
+                            <span
+                                class="badge ${priorityClass}"
+                            >
+                                Priority:
+                                ${escapeHtml(
+                                    task.priority ||
+                                    "Medium"
+                                )}
+                            </span>
+
+                            <span
+                                class="badge ${statusClass}"
+                            >
+                                ${escapeHtml(
+                                    task.status ||
+                                    "Pending"
+                                )}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            })
+            .join("");
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Task Error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="error">
+
+                ❌ ${escapeHtml(
+                    error.message
+                )}
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* ================= HTML SECURITY ================= */
+
+function escapeHtml(value){
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.textContent =
+        value == null
+        ? ""
+        : String(value);
+
+    return div.innerHTML;
+
+}
+
+
+/* ================= LOGOUT ================= */
+
+function logout(){
+
+    localStorage.removeItem(
+        "scmsUser"
+    );
+
+    window.location.href =
+        "/login";
+
+}
+
+
+/* ================= START ================= */
+
+loadTasks();
+
+</script>
+
+
+</body>
+
+</html>
