@@ -223,13 +223,7 @@ def employee_projects(user_id):
 
 @app.route("/")
 def home():
-    return jsonify({
-        "success": True,
-        "message": "SCMS API is running 🚀",
-        "company": "Mayur Tech",
-        "location": "Dadiyapura, Jhansi",
-        "version": "1.0"
-    })
+    return send_from_directory(FRONTEND_DIR, "login.html")
 
 
 @app.route("/login")
