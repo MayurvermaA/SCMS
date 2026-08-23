@@ -1,0 +1,3051 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Mayur Tech - Employees</title>
+
+    <style>
+
+        /* =========================================
+           RESET
+        ========================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        html,
+        body {
+            min-height: 100%;
+        }
+
+
+        body {
+            background: #080b16;
+            color: white;
+            overflow-x: hidden;
+        }
+
+
+        /* =========================================
+           APP
+        ========================================= */
+
+        .app {
+            min-height: 100vh;
+        }
+
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+
+        .sidebar {
+
+            width: 250px;
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            height: 100vh;
+
+            padding: 25px 16px 110px;
+
+            background: #0d1120;
+
+            border-right: 1px solid #20263a;
+
+            z-index: 1000;
+
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            scrollbar-width: thin;
+            scrollbar-color: #303750 #0d1120;
+        }
+
+
+        .sidebar::-webkit-scrollbar {
+            width: 7px;
+        }
+
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #0d1120;
+        }
+
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #303750;
+            border-radius: 10px;
+        }
+
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #505b7d;
+        }
+
+
+        /* =========================================
+           BRAND
+        ========================================= */
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding:
+                5px 12px 30px;
+        }
+
+
+        .brand-logo {
+
+            width: 55px;
+            height: 55px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6c63ff,
+                    #00d4ff
+                );
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            flex-shrink: 0;
+        }
+
+
+        .brand-name {
+
+            font-size: 23px;
+
+            font-weight: bold;
+        }
+
+
+        .company-name {
+
+            margin-top: 3px;
+
+            color: #68728d;
+
+            font-size: 10px;
+        }
+
+
+        /* =========================================
+           MENU TITLE
+        ========================================= */
+
+        .menu-title {
+
+            margin:
+                18px 12px 10px;
+
+            color: #68728d;
+
+            font-size: 11px;
+
+            text-transform: uppercase;
+
+            letter-spacing: .3px;
+        }
+
+
+        /* =========================================
+           MENU
+        ========================================= */
+
+        .menu {
+
+            list-style: none;
+
+            padding: 0;
+
+            margin: 0;
+        }
+
+
+        .menu li {
+
+            margin-bottom: 6px;
+        }
+
+
+        .menu a {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding:
+                14px 16px;
+
+            color: #9ca5bd;
+
+            text-decoration: none;
+
+            border-radius: 12px;
+
+            transition: .25s;
+        }
+
+
+        .menu a:hover {
+
+            color: white;
+
+            background:
+                rgba(
+                    108,
+                    99,
+                    255,
+                    .12
+                );
+        }
+
+
+        .menu a.active {
+
+            color: white;
+
+            background:
+                rgba(
+                    108,
+                    99,
+                    255,
+                    .18
+                );
+
+            box-shadow:
+                inset 3px 0 0
+                #6c63ff;
+        }
+
+
+        .menu-icon {
+
+            width: 24px;
+
+            min-width: 24px;
+
+            text-align: center;
+
+            font-size: 19px;
+        }
+
+
+        .menu-text {
+
+            font-size: 15px;
+        }
+
+
+        /* =========================================
+           LOGOUT
+        ========================================= */
+
+        .logout {
+
+            position: fixed;
+
+            left: 16px;
+
+            bottom: 20px;
+
+            width: 218px;
+
+            padding-top: 10px;
+
+            background: #0d1120;
+
+            z-index: 1100;
+        }
+
+
+        .logout button {
+
+            width: 100%;
+
+            padding: 13px;
+
+            border:
+                1px solid #303750;
+
+            border-radius: 12px;
+
+            background:
+                #0d1120;
+
+            color: #ff8585;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            transition: .25s;
+        }
+
+
+        .logout button:hover {
+
+            background:
+                rgba(
+                    255,
+                    70,
+                    70,
+                    .08
+                );
+
+            border-color:
+                rgba(
+                    255,
+                    70,
+                    70,
+                    .35
+                );
+        }
+
+
+        /* =========================================
+           MAIN
+        ========================================= */
+
+        .main {
+
+            width:
+                calc(
+                    100% - 250px
+                );
+
+            margin-left: 250px;
+
+            min-height: 100vh;
+
+            overflow-y: auto;
+
+            scrollbar-width: thin;
+
+            scrollbar-color:
+                #303750 #080b16;
+        }
+
+
+        .main::-webkit-scrollbar {
+
+            width: 8px;
+        }
+
+
+        .main::-webkit-scrollbar-track {
+
+            background: #080b16;
+        }
+
+
+        .main::-webkit-scrollbar-thumb {
+
+            background: #303750;
+
+            border-radius: 10px;
+        }
+
+
+        .main::-webkit-scrollbar-thumb:hover {
+
+            background: #505b7d;
+        }
+
+
+        /* =========================================
+           TOPBAR
+        ========================================= */
+
+        .topbar {
+
+            min-height: 82px;
+
+            padding:
+                0 35px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content:
+                space-between;
+
+            border-bottom:
+                1px solid #20263a;
+
+            background:
+                rgba(
+                    8,
+                    11,
+                    22,
+                    .96
+                );
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 500;
+        }
+
+
+        .page-title {
+
+            font-size: 25px;
+
+            font-weight: bold;
+        }
+
+
+        .user-area {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+        }
+
+
+        .user-info {
+
+            text-align: right;
+        }
+
+
+        .user-name {
+
+            font-size: 15px;
+
+            font-weight: bold;
+        }
+
+
+        .user-role {
+
+            margin-top: 4px;
+
+            color: #7d87a1;
+
+            font-size: 12px;
+
+            text-transform:
+                capitalize;
+        }
+
+
+        .user-avatar {
+
+            width: 46px;
+
+            height: 46px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6c63ff,
+                    #00d4ff
+                );
+
+            font-size: 17px;
+
+            font-weight: bold;
+        }
+
+
+        /* =========================================
+           CONTENT
+        ========================================= */
+
+        .content {
+
+            padding: 35px;
+
+            min-height: calc(
+                100vh - 82px
+            );
+        }
+
+
+        /* =========================================
+           HEADING
+        ========================================= */
+
+        .heading-row {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content:
+                space-between;
+
+            gap: 25px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .heading h1 {
+
+            font-size: 38px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .heading p {
+
+            color: #7f89a3;
+
+            font-size: 16px;
+        }
+
+
+        /* =========================================
+           ADD BUTTON
+        ========================================= */
+
+        .add-btn {
+
+            border: none;
+
+            padding:
+                15px 22px;
+
+            border-radius: 13px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6c63ff,
+                    #00cfff
+                );
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 10px 30px
+                rgba(
+                    0,
+                    207,
+                    255,
+                    .12
+                );
+
+            transition: .25s;
+
+            white-space: nowrap;
+        }
+
+
+        .add-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 15px 35px
+                rgba(
+                    0,
+                    207,
+                    255,
+                    .20
+                );
+        }
+
+
+        /* =========================================
+           TOOLBAR
+        ========================================= */
+
+        .toolbar {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .search {
+
+            width: 350px;
+
+            max-width: 100%;
+
+            padding:
+                13px 16px;
+
+            background: #111628;
+
+            border:
+                1px solid #20263a;
+
+            border-radius: 11px;
+
+            color: white;
+
+            outline: none;
+
+            font-size: 14px;
+        }
+
+
+        .search::placeholder {
+
+            color: #68728d;
+        }
+
+
+        .search:focus {
+
+            border-color:
+                #6366ff;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(
+                    99,
+                    102,
+                    241,
+                    .08
+                );
+        }
+
+
+        .employee-total {
+
+            color: #77819b;
+
+            font-size: 13px;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================
+           TABLE CARD
+        ========================================= */
+
+        .table-card {
+
+            width: 100%;
+
+            background: #111628;
+
+            border:
+                1px solid #20263a;
+
+            border-radius: 18px;
+
+            padding: 22px;
+
+            overflow: hidden;
+        }
+
+
+        .table-wrapper {
+
+            width: 100%;
+
+            overflow-x: auto;
+
+            scrollbar-width: thin;
+
+            scrollbar-color:
+                #303750 #111628;
+        }
+
+
+        .table-wrapper::-webkit-scrollbar {
+
+            height: 7px;
+        }
+
+
+        .table-wrapper::-webkit-scrollbar-track {
+
+            background: #111628;
+        }
+
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+
+            background: #303750;
+
+            border-radius: 10px;
+        }
+
+
+        table {
+
+            width: 100%;
+
+            min-width: 900px;
+
+            border-collapse:
+                collapse;
+        }
+
+
+        th {
+
+            padding:
+                15px 12px;
+
+            text-align: left;
+
+            color: #68728d;
+
+            font-size: 12px;
+
+            font-weight: normal;
+
+            border-bottom:
+                1px solid #20263a;
+
+            white-space: nowrap;
+        }
+
+
+        td {
+
+            padding:
+                18px 12px;
+
+            color: #e2e6f0;
+
+            font-size: 13px;
+
+            border-bottom:
+                1px solid #1c2234;
+
+            white-space: nowrap;
+        }
+
+
+        tr:last-child td {
+
+            border-bottom: none;
+        }
+
+
+        tr:hover td {
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .015
+                );
+        }
+
+
+        /* =========================================
+           STATUS
+        ========================================= */
+
+        .status {
+
+            display: inline-block;
+
+            padding:
+                7px 11px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: bold;
+        }
+
+
+        .active {
+
+            background:
+                rgba(
+                    0,
+                    220,
+                    130,
+                    .12
+                );
+
+            color: #35e89b;
+        }
+
+
+        .inactive {
+
+            background:
+                rgba(
+                    255,
+                    90,
+                    90,
+                    .12
+                );
+
+            color: #ff8585;
+        }
+
+
+        /* =========================================
+           ACTIONS
+        ========================================= */
+
+        .actions {
+
+            display: flex;
+
+            gap: 8px;
+        }
+
+
+        .edit-btn,
+        .delete-btn {
+
+            padding:
+                9px 13px;
+
+            border-radius: 9px;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            border: none;
+        }
+
+
+        .edit-btn {
+
+            background:
+                rgba(
+                    108,
+                    99,
+                    255,
+                    .18
+                );
+
+            color: #aaa4ff;
+        }
+
+
+        .delete-btn {
+
+            background:
+                rgba(
+                    255,
+                    70,
+                    70,
+                    .12
+                );
+
+            color: #ff8585;
+        }
+
+
+        .edit-btn:hover {
+
+            background:
+                rgba(
+                    108,
+                    99,
+                    255,
+                    .30
+                );
+        }
+
+
+        .delete-btn:hover {
+
+            background:
+                rgba(
+                    255,
+                    70,
+                    70,
+                    .22
+                );
+        }
+
+
+        /* =========================================
+           EMPTY
+        ========================================= */
+
+        .empty {
+
+            padding:
+                60px 20px !important;
+
+            text-align: center;
+
+            color: #68728d !important;
+        }
+
+
+        .empty-icon {
+
+            font-size: 40px;
+
+            margin-bottom: 12px;
+        }
+
+
+        /* =========================================
+           MODAL
+        ========================================= */
+
+        .modal {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 3000;
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .72
+                );
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+        }
+
+
+        .modal.show {
+
+            display: flex;
+        }
+
+
+        .modal-box {
+
+            width: 650px;
+
+            max-width: 100%;
+
+            max-height: 90vh;
+
+            overflow-y: auto;
+
+            padding: 28px;
+
+            border-radius: 18px;
+
+            background: #111628;
+
+            border:
+                1px solid #303750;
+
+            box-shadow:
+                0 30px 80px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .5
+                );
+        }
+
+
+        .modal-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content:
+                space-between;
+
+            margin-bottom: 25px;
+        }
+
+
+        .modal-header h2 {
+
+            font-size: 22px;
+        }
+
+
+        .close {
+
+            width: 35px;
+
+            height: 35px;
+
+            border: none;
+
+            border-radius: 9px;
+
+            background: #20263a;
+
+            color: white;
+
+            cursor: pointer;
+
+            font-size: 18px;
+        }
+
+
+        .close:hover {
+
+            background: #303750;
+        }
+
+
+        .form-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap: 17px;
+        }
+
+
+        .form-group {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 7px;
+        }
+
+
+        .form-group.full {
+
+            grid-column:
+                1 / -1;
+        }
+
+
+        label {
+
+            color: #8992aa;
+
+            font-size: 12px;
+        }
+
+
+        input,
+        select {
+
+            width: 100%;
+
+            padding:
+                13px 14px;
+
+            border-radius: 10px;
+
+            border:
+                1px solid #2a3147;
+
+            background: #0b0f1d;
+
+            color: white;
+
+            outline: none;
+
+            font-size: 13px;
+        }
+
+
+        input:focus,
+        select:focus {
+
+            border-color:
+                #6366ff;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(
+                    99,
+                    102,
+                    241,
+                    .08
+                );
+        }
+
+
+        select option {
+
+            background: #111628;
+
+            color: white;
+        }
+
+
+        .form-actions {
+
+            display: flex;
+
+            justify-content:
+                flex-end;
+
+            gap: 10px;
+
+            margin-top: 25px;
+        }
+
+
+        .cancel-btn,
+        .save-btn {
+
+            padding:
+                12px 18px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-size: 13px;
+
+            border: none;
+        }
+
+
+        .cancel-btn {
+
+            background: #20263a;
+
+            color: #b8bfd0;
+        }
+
+
+        .save-btn {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6c63ff,
+                    #00cfff
+                );
+
+            color: white;
+
+            font-weight: bold;
+        }
+
+
+        .cancel-btn:hover {
+
+            background: #303750;
+        }
+
+
+        .save-btn:hover {
+
+            opacity: .9;
+        }
+
+
+        /* =========================================
+           TOAST
+        ========================================= */
+
+        .toast {
+
+            position: fixed;
+
+            right: 25px;
+
+            bottom: 25px;
+
+            padding:
+                14px 20px;
+
+            border-radius: 10px;
+
+            background: #151b2d;
+
+            border:
+                1px solid #303750;
+
+            color: white;
+
+            display: none;
+
+            z-index: 5000;
+
+            box-shadow:
+                0 15px 40px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .35
+                );
+        }
+
+
+        .toast.show {
+
+            display: block;
+        }
+
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media(max-width: 900px) {
+
+            .sidebar {
+
+                width: 80px;
+
+                padding:
+                    20px 8px 100px;
+            }
+
+
+            .brand {
+
+                justify-content: center;
+            }
+
+
+            .brand-name,
+            .company-name,
+            .menu-title,
+            .menu-text {
+
+                display: none;
+            }
+
+
+            .menu a {
+
+                justify-content: center;
+
+                padding:
+                    14px 5px;
+            }
+
+
+            .logout {
+
+                left: 8px;
+
+                width: 64px;
+
+                bottom: 15px;
+            }
+
+
+            .logout button {
+
+                font-size: 0;
+
+                height: 48px;
+
+                padding: 0;
+            }
+
+
+            .logout button::first-letter {
+
+                font-size: 18px;
+            }
+
+
+            .main {
+
+                width:
+                    calc(
+                        100% - 80px
+                    );
+
+                margin-left: 80px;
+            }
+
+
+            .content {
+
+                padding:
+                    25px 20px;
+            }
+
+        }
+
+
+        @media(max-width: 650px) {
+
+            .topbar {
+
+                padding:
+                    0 20px;
+            }
+
+
+            .user-info {
+
+                display: none;
+            }
+
+
+            .heading-row {
+
+                align-items:
+                    flex-start;
+
+                flex-direction:
+                    column;
+            }
+
+
+            .heading h1 {
+
+                font-size: 30px;
+            }
+
+
+            .add-btn {
+
+                width: 100%;
+            }
+
+
+            .toolbar {
+
+                align-items:
+                    stretch;
+
+                flex-direction:
+                    column;
+            }
+
+
+            .search {
+
+                width: 100%;
+            }
+
+
+            .form-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .form-group.full {
+
+                grid-column:
+                    auto;
+            }
+
+
+            .modal-box {
+
+                padding: 20px;
+            }
+
+        }
+
+
+        @media(max-width: 450px) {
+
+            .sidebar {
+
+                width: 65px;
+            }
+
+
+            .main {
+
+                width:
+                    calc(
+                        100% - 65px
+                    );
+
+                margin-left: 65px;
+            }
+
+
+            .brand-logo {
+
+                width: 45px;
+
+                height: 45px;
+
+                font-size: 16px;
+            }
+
+
+            .content {
+
+                padding:
+                    20px 12px;
+            }
+
+
+            .page-title {
+
+                font-size: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- =====================================
+         SIDEBAR
+    ====================================== -->
+
+    <aside class="sidebar">
+
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                SC
+            </div>
+
+
+            <div>
+
+                <div class="brand-name">
+                    SCMS
+                </div>
+
+                <div class="company-name">
+                    Mayur Tech
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- MAIN MENU -->
+
+        <div class="menu-title">
+            Main Menu
+        </div>
+
+
+        <ul class="menu">
+
+
+            <!-- DASHBOARD -->
+
+            <li>
+
+                <a href="/dashboard">
+
+                    <span class="menu-icon">
+                        🏠
+                    </span>
+
+                    <span class="menu-text">
+                        Dashboard
+                    </span>
+
+                </a>
+
+            </li>
+
+
+            <!-- EMPLOYEES -->
+
+            <li>
+
+                <a
+                    href="/employees"
+                    class="active"
+                >
+
+                    <span class="menu-icon">
+                        👨‍💻
+                    </span>
+
+                    <span class="menu-text">
+                        Employees
+                    </span>
+
+                </a>
+
+            </li>
+
+
+            <!-- PROJECTS -->
+
+            <li>
+
+                <a href="/projects">
+
+                    <span class="menu-icon">
+                        📁
+                    </span>
+
+                    <span class="menu-text">
+                        Projects
+                    </span>
+
+                </a>
+
+            </li>
+
+
+            <!-- TASKS -->
+
+            <li>
+
+                <a href="/tasks">
+
+                    <span class="menu-icon">
+                        ✅
+                    </span>
+
+                    <span class="menu-text">
+                        Tasks
+                    </span>
+
+                </a>
+
+            </li>
+
+
+        </ul>
+
+
+        <!-- COMPANY -->
+
+        <div class="menu-title">
+            Company
+        </div>
+
+
+        <ul class="menu">
+
+
+            <!-- ABOUT -->
+
+            <li>
+
+                <a href="/about">
+
+                    <span class="menu-icon">
+                        ℹ️
+                    </span>
+
+                    <span class="menu-text">
+                        About
+                    </span>
+
+                </a>
+
+            </li>
+
+
+            <!-- SETTINGS -->
+
+            <li>
+
+                <a href="/settings">
+
+                    <span class="menu-icon">
+                        ⚙️
+                    </span>
+
+                    <span class="menu-text">
+                        Settings
+                    </span>
+
+                </a>
+
+            </li>
+
+
+        </ul>
+
+
+    </aside>
+
+
+    <!-- =====================================
+         LOGOUT
+    ====================================== -->
+
+    <div class="logout">
+
+        <button
+            onclick="logout()"
+            title="Logout"
+        >
+            🚪
+            <span>
+                Logout
+            </span>
+        </button>
+
+    </div>
+
+
+    <!-- =====================================
+         MAIN
+    ====================================== -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+
+            <div class="page-title">
+                Employees
+            </div>
+
+
+            <div class="user-area">
+
+
+                <div class="user-info">
+
+                    <div
+                        class="user-name"
+                        id="userName"
+                    >
+                        Mayur Verma
+                    </div>
+
+
+                    <div
+                        class="user-role"
+                        id="userRole"
+                    >
+                        Administrator
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="user-avatar"
+                    id="userAvatar"
+                >
+                    M
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+        <!-- =====================================
+             CONTENT
+        ====================================== -->
+
+        <section class="content">
+
+
+            <!-- HEADING -->
+
+            <div class="heading-row">
+
+
+                <div class="heading">
+
+                    <h1>
+                        Employee Management
+                    </h1>
+
+                    <p>
+                        Manage your company's employees.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="add-btn"
+                    onclick="openAddModal()"
+                >
+                    + Add Employee
+                </button>
+
+
+            </div>
+
+
+            <!-- TOOLBAR -->
+
+            <div class="toolbar">
+
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    class="search"
+                    placeholder="🔍 Search employee..."
+                    oninput="searchEmployees()"
+                >
+
+
+                <div
+                    class="employee-total"
+                    id="employeeTotal"
+                >
+                    Loading employees...
+                </div>
+
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="table-card">
+
+
+                <div class="table-wrapper">
+
+
+                    <table>
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Name
+                                </th>
+
+                                <th>
+                                    Employee Code
+                                </th>
+
+                                <th>
+                                    Department
+                                </th>
+
+                                <th>
+                                    Designation
+                                </th>
+
+                                <th>
+                                    Phone
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody
+                            id="employeeTable"
+                        >
+
+                            <tr>
+
+                                <td
+                                    colspan="7"
+                                    class="empty"
+                                >
+
+                                    <div
+                                        class="empty-icon"
+                                    >
+                                        ⏳
+                                    </div>
+
+                                    Loading employees...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+<!-- =========================================
+     ADD / EDIT MODAL
+========================================= -->
+
+<div
+    class="modal"
+    id="employeeModal"
+>
+
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+
+            <h2 id="modalTitle">
+                Add Employee
+            </h2>
+
+
+            <button
+                class="close"
+                onclick="closeModal()"
+                type="button"
+            >
+                ×
+            </button>
+
+
+        </div>
+
+
+        <form
+            id="employeeForm"
+            onsubmit="saveEmployee(event)"
+        >
+
+
+            <div class="form-grid">
+
+
+                <!-- NAME -->
+
+                <div class="form-group">
+
+                    <label>
+                        Employee Name *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        required
+                        placeholder="Enter employee name"
+                    >
+
+                </div>
+
+
+                <!-- EMPLOYEE CODE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Employee Code *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="employee_code"
+                        required
+                        placeholder="EMP0002"
+                    >
+
+                </div>
+
+
+                <!-- DEPARTMENT -->
+
+                <div class="form-group">
+
+                    <label>
+                        Department
+                    </label>
+
+                    <input
+                        type="text"
+                        id="department"
+                        placeholder="Computer Science"
+                    >
+
+                </div>
+
+
+                <!-- DESIGNATION -->
+
+                <div class="form-group">
+
+                    <label>
+                        Designation
+                    </label>
+
+                    <input
+                        type="text"
+                        id="designation"
+                        placeholder="Software Developer"
+                    >
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Phone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        placeholder="9876543210"
+                    >
+
+                </div>
+
+
+                <!-- JOINING DATE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Joining Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="joining_date"
+                    >
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="form-group">
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select id="status">
+
+                        <option value="Active">
+                            Active
+                        </option>
+
+                        <option value="Inactive">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="form-actions">
+
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="closeModal()"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="save-btn"
+                >
+                    Save Employee
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================================
+     TOAST
+========================================= -->
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
+
+<script>
+
+
+// ==========================================
+// LOGIN CHECK
+// ==========================================
+
+const savedUser =
+    localStorage.getItem(
+        "scmsUser"
+    );
+
+
+if (!savedUser) {
+
+    window.location.href =
+        "/login";
+}
+
+
+let user = null;
+
+
+try {
+
+    user =
+        JSON.parse(
+            savedUser
+        );
+
+}
+
+catch (error) {
+
+    localStorage.removeItem(
+        "scmsUser"
+    );
+
+    window.location.href =
+        "/login";
+}
+
+
+// ==========================================
+// USER INFORMATION
+// ==========================================
+
+if (user) {
+
+    const name =
+        user.name ||
+        "Mayur Verma";
+
+
+    const role =
+        user.role ||
+        "Administrator";
+
+
+    document.getElementById(
+        "userName"
+    ).textContent =
+        name;
+
+
+    document.getElementById(
+        "userRole"
+    ).textContent =
+        role;
+
+
+    document.getElementById(
+        "userAvatar"
+    ).textContent =
+        name
+            .charAt(0)
+            .toUpperCase();
+}
+
+
+// ==========================================
+// VARIABLES
+// ==========================================
+
+let employees = [];
+
+let editEmployeeId = null;
+
+
+// ==========================================
+// LOAD EMPLOYEES
+// ==========================================
+
+async function loadEmployees() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/employees",
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Server error: " +
+                response.status
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load employees"
+            );
+        }
+
+
+        employees =
+            data.employees ||
+            [];
+
+
+        renderEmployees(
+            employees
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Employee error:",
+            error
+        );
+
+
+        document.getElementById(
+            "employeeTotal"
+        ).textContent =
+            "Unable to load";
+
+
+        document.getElementById(
+            "employeeTable"
+        ).innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="empty"
+                >
+
+                    <div
+                        class="empty-icon"
+                    >
+                        ⚠️
+                    </div>
+
+                    Unable to load employees.
+
+                </td>
+
+            </tr>
+
+        `;
+    }
+}
+
+
+// ==========================================
+// RENDER EMPLOYEES
+// ==========================================
+
+function renderEmployees(
+    list
+) {
+
+    const table =
+        document.getElementById(
+            "employeeTable"
+        );
+
+
+    document.getElementById(
+        "employeeTotal"
+    ).textContent =
+        `${list.length} employee(s)`;
+
+
+    if (
+        !list ||
+        list.length === 0
+    ) {
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="empty"
+                >
+
+                    <div
+                        class="empty-icon"
+                    >
+                        👨‍💻
+                    </div>
+
+                    No employees found.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+    }
+
+
+    table.innerHTML = "";
+
+
+    list.forEach(
+        employee => {
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const statusClass =
+                employee.status ===
+                "Active"
+                    ? "active"
+                    : "inactive";
+
+
+            row.innerHTML = `
+
+                <td>
+
+                    <strong>
+                        ${escapeHtml(
+                            employee.name ||
+                            "-"
+                        )}
+                    </strong>
+
+                </td>
+
+
+                <td>
+                    ${escapeHtml(
+                        employee.employee_code ||
+                        "-"
+                    )}
+                </td>
+
+
+                <td>
+                    ${escapeHtml(
+                        employee.department ||
+                        "-"
+                    )}
+                </td>
+
+
+                <td>
+                    ${escapeHtml(
+                        employee.designation ||
+                        "-"
+                    )}
+                </td>
+
+
+                <td>
+                    ${escapeHtml(
+                        employee.phone ||
+                        "-"
+                    )}
+                </td>
+
+
+                <td>
+
+                    <span
+                        class="status ${statusClass}"
+                    >
+                        ${escapeHtml(
+                            employee.status ||
+                            "Active"
+                        )}
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <div
+                        class="actions"
+                    >
+
+                        <button
+                            class="edit-btn"
+                            onclick="editEmployee(${employee.id})"
+                        >
+                            Edit
+                        </button>
+
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteEmployee(${employee.id})"
+                        >
+                            Delete
+                        </button>
+
+                    </div>
+
+                </td>
+
+            `;
+
+
+            table.appendChild(
+                row
+            );
+
+        }
+    );
+}
+
+
+// ==========================================
+// SEARCH
+// ==========================================
+
+function searchEmployees() {
+
+    const search =
+        document.getElementById(
+            "searchInput"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    if (!search) {
+
+        renderEmployees(
+            employees
+        );
+
+        return;
+    }
+
+
+    const filtered =
+        employees.filter(
+            employee => {
+
+                return (
+
+                    String(
+                        employee.name ||
+                        ""
+                    )
+                    .toLowerCase()
+                    .includes(search)
+
+                    ||
+
+                    String(
+                        employee.employee_code ||
+                        ""
+                    )
+                    .toLowerCase()
+                    .includes(search)
+
+                    ||
+
+                    String(
+                        employee.department ||
+                        ""
+                    )
+                    .toLowerCase()
+                    .includes(search)
+
+                    ||
+
+                    String(
+                        employee.designation ||
+                        ""
+                    )
+                    .toLowerCase()
+                    .includes(search)
+
+                    ||
+
+                    String(
+                        employee.phone ||
+                        ""
+                    )
+                    .toLowerCase()
+                    .includes(search)
+
+                );
+            }
+        );
+
+
+    renderEmployees(
+        filtered
+    );
+}
+
+
+// ==========================================
+// OPEN ADD MODAL
+// ==========================================
+
+function openAddModal() {
+
+    editEmployeeId = null;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Add Employee";
+
+
+    document.getElementById(
+        "employeeForm"
+    ).reset();
+
+
+    document.getElementById(
+        "status"
+    ).value =
+        "Active";
+
+
+    document.getElementById(
+        "employeeModal"
+    ).classList.add(
+        "show"
+    );
+}
+
+
+// ==========================================
+// CLOSE MODAL
+// ==========================================
+
+function closeModal() {
+
+    document.getElementById(
+        "employeeModal"
+    ).classList.remove(
+        "show"
+    );
+}
+
+
+// ==========================================
+// EDIT EMPLOYEE
+// ==========================================
+
+function editEmployee(
+    id
+) {
+
+    const employee =
+        employees.find(
+            item =>
+                item.id === id
+        );
+
+
+    if (!employee) {
+
+        showToast(
+            "Employee not found"
+        );
+
+        return;
+    }
+
+
+    editEmployeeId =
+        id;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Employee";
+
+
+    document.getElementById(
+        "name"
+    ).value =
+        employee.name ||
+        "";
+
+
+    document.getElementById(
+        "employee_code"
+    ).value =
+        employee.employee_code ||
+        "";
+
+
+    document.getElementById(
+        "department"
+    ).value =
+        employee.department ||
+        "";
+
+
+    document.getElementById(
+        "designation"
+    ).value =
+        employee.designation ||
+        "";
+
+
+    document.getElementById(
+        "phone"
+    ).value =
+        employee.phone ||
+        "";
+
+
+    document.getElementById(
+        "joining_date"
+    ).value =
+        employee.joining_date ||
+        "";
+
+
+    document.getElementById(
+        "status"
+    ).value =
+        employee.status ||
+        "Active";
+
+
+    document.getElementById(
+        "employeeModal"
+    ).classList.add(
+        "show"
+    );
+}
+
+
+// ==========================================
+// SAVE EMPLOYEE
+// ==========================================
+
+async function saveEmployee(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const employeeData = {
+
+        name:
+            document.getElementById(
+                "name"
+            )
+            .value
+            .trim(),
+
+        employee_code:
+            document.getElementById(
+                "employee_code"
+            )
+            .value
+            .trim(),
+
+        department:
+            document.getElementById(
+                "department"
+            )
+            .value
+            .trim(),
+
+        designation:
+            document.getElementById(
+                "designation"
+            )
+            .value
+            .trim(),
+
+        phone:
+            document.getElementById(
+                "phone"
+            )
+            .value
+            .trim(),
+
+        joining_date:
+            document.getElementById(
+                "joining_date"
+            )
+            .value,
+
+        status:
+            document.getElementById(
+                "status"
+            )
+            .value
+    };
+
+
+    try {
+
+        let url =
+            "/api/employees";
+
+
+        let method =
+            "POST";
+
+
+        if (editEmployeeId) {
+
+            url =
+                `/api/employees/${editEmployeeId}`;
+
+            method =
+                "PUT";
+        }
+
+
+        const response =
+            await fetch(
+                url,
+                {
+
+                    method:
+                        method,
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            employeeData
+                        )
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to save employee"
+            );
+        }
+
+
+        const wasEditing =
+            Boolean(
+                editEmployeeId
+            );
+
+
+        editEmployeeId =
+            null;
+
+
+        closeModal();
+
+
+        showToast(
+            wasEditing
+                ? "Employee updated successfully"
+                : "Employee added successfully"
+        );
+
+
+        await loadEmployees();
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Save employee error:",
+            error
+        );
+
+
+        showToast(
+            error.message
+        );
+    }
+}
+
+
+// ==========================================
+// DELETE EMPLOYEE
+// ==========================================
+
+async function deleteEmployee(
+    id
+) {
+
+    const employee =
+        employees.find(
+            item =>
+                item.id === id
+        );
+
+
+    if (!employee) {
+        return;
+    }
+
+
+    const confirmDelete =
+        confirm(
+            `Delete ${employee.name}?`
+        );
+
+
+    if (!confirmDelete) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/employees/${id}`,
+                {
+                    method:
+                        "DELETE"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to delete employee"
+            );
+        }
+
+
+        showToast(
+            "Employee deleted successfully"
+        );
+
+
+        await loadEmployees();
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Delete employee error:",
+            error
+        );
+
+
+        showToast(
+            error.message
+        );
+    }
+}
+
+
+// ==========================================
+// TOAST
+// ==========================================
+
+function showToast(
+    message
+) {
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        function() {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        2500
+    );
+}
+
+
+// ==========================================
+// ESCAPE HTML
+// ==========================================
+
+function escapeHtml(
+    value
+) {
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
+
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+function logout() {
+
+    localStorage.removeItem(
+        "scmsUser"
+    );
+
+
+    window.location.href =
+        "/login";
+}
+
+
+// ==========================================
+// MODAL OUTSIDE CLICK
+// ==========================================
+
+document.getElementById(
+    "employeeModal"
+).addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            event.target === this
+        ) {
+
+            closeModal();
+        }
+    }
+);
+
+
+// ==========================================
+// ESC KEY CLOSE MODAL
+// ==========================================
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeModal();
+        }
+
+    }
+);
+
+
+// ==========================================
+// LOAD EMPLOYEES
+// ==========================================
+
+loadEmployees();
+
+</script>
+
+
+</body>
+
+</html>
