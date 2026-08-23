@@ -1,0 +1,3106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Mayur Tech - Employees</title>
+
+
+<style>
+
+/* =====================================================
+   RESET
+===================================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#080b16;
+    color:white;
+    min-height:100vh;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar{
+    position:fixed;
+
+    left:0;
+    top:0;
+    bottom:0;
+
+    width:250px;
+    height:100vh;
+
+    padding:25px 16px 105px;
+
+    background:#0d1120;
+
+    border-right:1px solid #20263a;
+
+    overflow-y:auto;
+
+    z-index:1000;
+}
+
+
+/* =====================================================
+   BRAND
+===================================================== */
+
+.brand{
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:5px 12px 30px;
+}
+
+.brand-logo{
+    width:55px;
+    height:55px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6c63ff,
+            #00d4ff
+        );
+
+    font-size:20px;
+
+    font-weight:bold;
+}
+
+.brand-name{
+    font-size:23px;
+
+    font-weight:bold;
+}
+
+.company-name{
+    color:#68728d;
+
+    font-size:10px;
+
+    margin-top:3px;
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+.menu-title{
+    margin:18px 12px 10px;
+
+    color:#68728d;
+
+    font-size:11px;
+
+    text-transform:uppercase;
+}
+
+.menu{
+    list-style:none;
+}
+
+.menu li{
+    margin-bottom:6px;
+}
+
+.menu a{
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px 16px;
+
+    color:#9ca5bd;
+
+    text-decoration:none;
+
+    border-radius:12px;
+
+    transition:.25s;
+}
+
+.menu a:hover{
+    color:white;
+
+    background:
+        rgba(
+            108,
+            99,
+            255,
+            .12
+        );
+}
+
+.menu a.active{
+    color:white;
+
+    background:
+        rgba(
+            108,
+            99,
+            255,
+            .18
+        );
+
+    box-shadow:
+        inset 3px 0 0 #6c63ff;
+}
+
+.menu-icon{
+    width:24px;
+
+    min-width:24px;
+
+    text-align:center;
+
+    font-size:19px;
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+.logout{
+    position:fixed;
+
+    left:16px;
+
+    bottom:20px;
+
+    width:218px;
+
+    background:#0d1120;
+
+    z-index:1100;
+}
+
+.logout button{
+    width:100%;
+
+    padding:13px;
+
+    border:
+        1px solid #303750;
+
+    border-radius:12px;
+
+    background:#0d1120;
+
+    color:#ff8585;
+
+    cursor:pointer;
+
+    font-size:14px;
+}
+
+.logout button:hover{
+    background:
+        rgba(
+            255,
+            70,
+            70,
+            .08
+        );
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.main{
+    width:
+        calc(
+            100% - 250px
+        );
+
+    margin-left:250px;
+
+    min-height:100vh;
+}
+
+
+/* =====================================================
+   TOPBAR
+===================================================== */
+
+.topbar{
+    min-height:82px;
+
+    padding:0 35px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    border-bottom:
+        1px solid #20263a;
+
+    background:
+        rgba(
+            8,
+            11,
+            22,
+            .96
+        );
+
+    position:sticky;
+
+    top:0;
+
+    z-index:500;
+}
+
+.page-title{
+    font-size:25px;
+
+    font-weight:bold;
+}
+
+.user-area{
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+}
+
+.user-info{
+    text-align:right;
+}
+
+.user-name{
+    font-size:15px;
+
+    font-weight:bold;
+}
+
+.user-role{
+    color:#7d87a1;
+
+    font-size:12px;
+
+    margin-top:4px;
+}
+
+.user-avatar{
+    width:46px;
+    height:46px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6c63ff,
+            #00d4ff
+        );
+
+    font-weight:bold;
+}
+
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.content{
+    padding:35px;
+}
+
+
+/* =====================================================
+   PAGE HEADING
+===================================================== */
+
+.heading{
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+    margin-bottom:25px;
+}
+
+.heading h1{
+    font-size:38px;
+
+    margin-bottom:8px;
+}
+
+.heading p{
+    color:#7f89a3;
+
+    font-size:14px;
+}
+
+
+/* =====================================================
+   ADD BUTTON
+===================================================== */
+
+.add-btn{
+    border:none;
+
+    padding:13px 20px;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6c63ff,
+            #00cfff
+        );
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    white-space:nowrap;
+}
+
+.add-btn:hover{
+    opacity:.9;
+}
+
+
+/* =====================================================
+   TOOLBAR
+===================================================== */
+
+.toolbar{
+    display:flex;
+
+    gap:12px;
+
+    margin-bottom:20px;
+}
+
+.search{
+    flex:1;
+}
+
+.search input{
+    width:100%;
+
+    padding:14px 16px;
+
+    border:
+        1px solid #2a3147;
+
+    border-radius:11px;
+
+    background:#111628;
+
+    color:white;
+
+    outline:none;
+}
+
+.search input:focus{
+    border-color:#6c63ff;
+}
+
+.status-filter{
+    width:160px;
+
+    padding:14px;
+
+    border:
+        1px solid #2a3147;
+
+    border-radius:11px;
+
+    background:#111628;
+
+    color:white;
+
+    outline:none;
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.card{
+    background:#111628;
+
+    border:
+        1px solid #20263a;
+
+    border-radius:18px;
+
+    overflow:hidden;
+}
+
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.table-wrapper{
+    width:100%;
+
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+
+    min-width:1050px;
+
+    border-collapse:collapse;
+}
+
+th{
+    padding:16px 14px;
+
+    text-align:left;
+
+    color:#68728d;
+
+    font-size:11px;
+
+    font-weight:normal;
+
+    border-bottom:
+        1px solid #20263a;
+}
+
+td{
+    padding:16px 14px;
+
+    border-bottom:
+        1px solid #1c2234;
+
+    font-size:13px;
+}
+
+tr:last-child td{
+    border-bottom:none;
+}
+
+
+/* =====================================================
+   EMPLOYEE
+===================================================== */
+
+.employee-name{
+    font-weight:bold;
+}
+
+.employee-email{
+    color:#68728d;
+
+    font-size:11px;
+
+    margin-top:4px;
+}
+
+.code{
+    color:#9d96ff;
+
+    font-weight:bold;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status{
+    display:inline-block;
+
+    padding:6px 10px;
+
+    border-radius:20px;
+
+    font-size:10px;
+
+    font-weight:bold;
+}
+
+.active{
+    color:#35e89b;
+
+    background:
+        rgba(
+            0,
+            220,
+            130,
+            .12
+        );
+}
+
+.inactive{
+    color:#ff8585;
+
+    background:
+        rgba(
+            255,
+            80,
+            80,
+            .12
+        );
+}
+
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+
+.actions{
+    display:flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    white-space:nowrap;
+}
+
+.action-btn{
+    padding:7px 10px;
+
+    border-radius:8px;
+
+    border:
+        1px solid #303750;
+
+    background:#0b0f1d;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+.action-btn:hover{
+    background:#171d31;
+}
+
+.edit-btn:hover{
+    border-color:#6c63ff;
+
+    color:#a9a3ff;
+}
+
+.delete-btn:hover{
+    border-color:#ff6060;
+
+    color:#ff8585;
+}
+
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.empty{
+    text-align:center;
+
+    padding:40px !important;
+
+    color:#68728d;
+}
+
+
+/* =====================================================
+   MODAL BASE
+===================================================== */
+
+.modal{
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .72
+        );
+
+    z-index:3000;
+
+    padding:20px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:100%;
+
+    max-width:700px;
+
+    max-height:90vh;
+
+    overflow-y:auto;
+
+    background:#111628;
+
+    border:
+        1px solid #303750;
+
+    border-radius:20px;
+
+    padding:28px;
+}
+
+.modal-header{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:25px;
+}
+
+.modal-header h2{
+    font-size:22px;
+}
+
+.close{
+    width:35px;
+
+    height:35px;
+
+    border:none;
+
+    border-radius:9px;
+
+    background:#20263a;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:18px;
+}
+
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.form-grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:17px;
+}
+
+.form-group{
+    display:flex;
+
+    flex-direction:column;
+
+    gap:7px;
+}
+
+.form-group.full{
+    grid-column:1/-1;
+}
+
+label{
+    color:#8992aa;
+
+    font-size:12px;
+}
+
+input,
+select{
+    width:100%;
+
+    padding:13px 14px;
+
+    background:#0b0f1d;
+
+    color:white;
+
+    border:
+        1px solid #2a3147;
+
+    border-radius:10px;
+
+    outline:none;
+}
+
+input:focus,
+select:focus{
+    border-color:#6366ff;
+}
+
+.form-note{
+    grid-column:1/-1;
+
+    color:#68728d;
+
+    font-size:11px;
+
+    line-height:1.5;
+}
+
+
+/* =====================================================
+   MODAL FOOTER
+===================================================== */
+
+.modal-footer{
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:10px;
+
+    margin-top:25px;
+}
+
+.cancel-btn{
+    padding:12px 18px;
+
+    border:
+        1px solid #303750;
+
+    border-radius:10px;
+
+    background:#0b0f1d;
+
+    color:#aeb7cb;
+
+    cursor:pointer;
+}
+
+.save-btn{
+    padding:12px 20px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6c63ff,
+            #00cfff
+        );
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+.toast{
+    position:fixed;
+
+    right:25px;
+
+    bottom:25px;
+
+    padding:14px 20px;
+
+    border-radius:10px;
+
+    background:#151b2d;
+
+    border:
+        1px solid #303750;
+
+    color:white;
+
+    display:none;
+
+    z-index:5000;
+}
+
+.toast.show{
+    display:block;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:900px){
+
+    .sidebar{
+        width:80px;
+    }
+
+    .brand-name,
+    .company-name,
+    .menu-title{
+        display:none;
+    }
+
+    .brand{
+        justify-content:center;
+    }
+
+    .menu a{
+        justify-content:center;
+    }
+
+    .logout{
+        left:8px;
+
+        width:64px;
+    }
+
+    .main{
+        width:
+            calc(
+                100% - 80px
+            );
+
+        margin-left:80px;
+    }
+
+}
+
+
+@media(max-width:700px){
+
+    .content{
+        padding:20px 15px;
+    }
+
+    .topbar{
+        padding:0 20px;
+    }
+
+    .user-info{
+        display:none;
+    }
+
+    .heading{
+        flex-direction:column;
+    }
+
+    .toolbar{
+        flex-direction:column;
+    }
+
+    .status-filter{
+        width:100%;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-group.full,
+    .form-note{
+        grid-column:auto;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            SC
+        </div>
+
+        <div>
+
+            <div class="brand-name">
+                SCMS
+            </div>
+
+            <div class="company-name">
+                Mayur Tech
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="menu-title">
+        Main Menu
+    </div>
+
+
+    <ul class="menu">
+
+
+        <li>
+
+            <a href="/dashboard">
+
+                <span class="menu-icon">
+                    🏠
+                </span>
+
+                Dashboard
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a
+                href="/employees"
+                class="active"
+            >
+
+                <span class="menu-icon">
+                    👨‍💻
+                </span>
+
+                Employees
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="/projects">
+
+                <span class="menu-icon">
+                    📁
+                </span>
+
+                Projects
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="/tasks">
+
+                <span class="menu-icon">
+                    ✅
+                </span>
+
+                Tasks
+
+            </a>
+
+        </li>
+
+
+    </ul>
+
+
+    <div class="menu-title">
+        Account
+    </div>
+
+
+    <ul class="menu">
+
+
+        <li>
+
+            <a href="/profile">
+
+                <span class="menu-icon">
+                    👤
+                </span>
+
+                Profile
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="/about">
+
+                <span class="menu-icon">
+                    ℹ️
+                </span>
+
+                About
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="/settings">
+
+                <span class="menu-icon">
+                    ⚙️
+                </span>
+
+                Settings
+
+            </a>
+
+        </li>
+
+
+    </ul>
+
+
+</aside>
+
+
+<!-- =====================================================
+     LOGOUT
+===================================================== -->
+
+<div class="logout">
+
+    <button onclick="logout()">
+        🚪 Logout
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+
+    <header class="topbar">
+
+
+        <div class="page-title">
+            Employees
+        </div>
+
+
+        <div class="user-area">
+
+
+            <div class="user-info">
+
+                <div
+                    class="user-name"
+                    id="userName"
+                >
+                    Mayur Verma
+                </div>
+
+
+                <div
+                    class="user-role"
+                    id="userRole"
+                >
+                    Administrator
+                </div>
+
+            </div>
+
+
+            <div
+                class="user-avatar"
+                id="userAvatar"
+            >
+                M
+            </div>
+
+
+        </div>
+
+
+    </header>
+
+
+    <section class="content">
+
+
+        <div class="heading">
+
+
+            <div>
+
+                <h1>
+                    Employees
+                </h1>
+
+                <p>
+                    Manage your Mayur Tech employees
+                    and login accounts.
+                </p>
+
+            </div>
+
+
+            <button
+                class="add-btn"
+                onclick="openAddModal()"
+            >
+                + Add Employee
+            </button>
+
+
+        </div>
+
+
+        <div class="toolbar">
+
+
+            <div class="search">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="🔍 Search employee..."
+                    oninput="filterEmployees()"
+                >
+
+            </div>
+
+
+            <select
+                class="status-filter"
+                id="statusFilter"
+                onchange="filterEmployees()"
+            >
+
+                <option value="">
+                    All Status
+                </option>
+
+                <option value="Active">
+                    Active
+                </option>
+
+                <option value="Inactive">
+                    Inactive
+                </option>
+
+            </select>
+
+
+        </div>
+
+
+        <div class="card">
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                EMPLOYEE
+                            </th>
+
+                            <th>
+                                CODE
+                            </th>
+
+                            <th>
+                                DEPARTMENT
+                            </th>
+
+                            <th>
+                                DESIGNATION
+                            </th>
+
+                            <th>
+                                PHONE
+                            </th>
+
+                            <th>
+                                JOINING DATE
+                            </th>
+
+                            <th>
+                                STATUS
+                            </th>
+
+                            <th>
+                                ACTIONS
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="employeesTable"
+                    >
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="empty"
+                            >
+                                Loading employees...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+
+                </table>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- =====================================================
+     PART 1 END
+     
+     Part 2 में:
+     - Add Employee Modal
+     - Edit Employee Modal
+     - Create Login Modal
+     - Employee table JavaScript
+     
+     आएगा.
+===================================================== -->
+<!-- =====================================================
+     ADD / EDIT EMPLOYEE MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="employeeModal"
+>
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <h2 id="modalTitle">
+                Add Employee
+            </h2>
+
+            <button
+                class="close"
+                type="button"
+                onclick="closeModal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form
+            id="employeeForm"
+            onsubmit="saveEmployee(event)"
+        >
+
+
+            <div class="form-grid">
+
+
+                <!-- NAME -->
+
+                <div class="form-group">
+
+                    <label>
+                        Full Name *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="employeeName"
+                        placeholder="Enter employee name"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="employeeEmail"
+                        placeholder="employee@scms.com"
+                    >
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div
+                    class="form-group"
+                    id="passwordGroup"
+                >
+
+                    <label>
+                        Login Password *
+                    </label>
+
+                    <input
+                        type="password"
+                        id="employeePassword"
+                        placeholder="Enter login password"
+                        minlength="4"
+                    >
+
+                </div>
+
+
+                <!-- EMPLOYEE CODE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Employee Code *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="employeeCode"
+                        placeholder="EMP0002"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- DEPARTMENT -->
+
+                <div class="form-group">
+
+                    <label>
+                        Department
+                    </label>
+
+                    <input
+                        type="text"
+                        id="department"
+                        placeholder="CS"
+                    >
+
+                </div>
+
+
+                <!-- DESIGNATION -->
+
+                <div class="form-group">
+
+                    <label>
+                        Designation
+                    </label>
+
+                    <input
+                        type="text"
+                        id="designation"
+                        placeholder="Software Developer"
+                    >
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Phone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        placeholder="9876543210"
+                    >
+
+                </div>
+
+
+                <!-- JOINING DATE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Joining Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="joiningDate"
+                    >
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="form-group">
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select
+                        id="employeeStatus"
+                    >
+
+                        <option value="Active">
+                            Active
+                        </option>
+
+                        <option value="Inactive">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-note">
+
+                    New employees can receive a login
+                    account using their email and password.
+
+                </div>
+
+
+            </div>
+
+
+            <div class="modal-footer">
+
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="closeModal()"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="save-btn"
+                    id="saveButton"
+                >
+                    Add Employee
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     CREATE EMPLOYEE LOGIN MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="loginModal"
+>
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+
+            <h2>
+                🔐 Create Employee Login
+            </h2>
+
+
+            <button
+                class="close"
+                type="button"
+                onclick="closeLoginModal()"
+            >
+                ×
+            </button>
+
+
+        </div>
+
+
+        <form
+            id="loginForm"
+            onsubmit="createEmployeeLogin(event)"
+        >
+
+
+            <div class="form-grid">
+
+
+                <!-- EMPLOYEE -->
+
+                <div class="form-group full">
+
+                    <label>
+                        Employee
+                    </label>
+
+                    <input
+                        type="text"
+                        id="loginEmployeeName"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group full">
+
+                    <label>
+                        Login Email *
+                    </label>
+
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        placeholder="mayank@scms.com"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group full">
+
+                    <label>
+                        Password *
+                    </label>
+
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Enter password"
+                        minlength="4"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-note">
+
+                    This email and password will be used
+                    by the employee to sign in to SCMS.
+
+                </div>
+
+
+            </div>
+
+
+            <div class="modal-footer">
+
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="closeLoginModal()"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="save-btn"
+                    id="createLoginButton"
+                >
+                    Create Login
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     TOAST MESSAGE
+===================================================== -->
+
+<div
+    class="toast"
+    id="toast"
+>
+</div>
+<script>
+
+/* =====================================================
+   USER SESSION
+===================================================== */
+
+const savedUser =
+    localStorage.getItem("scmsUser");
+
+let currentUser = null;
+
+if(savedUser){
+
+    try{
+
+        currentUser =
+            JSON.parse(savedUser);
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+if(!currentUser){
+
+    window.location.href = "/login";
+
+}
+
+
+/* =====================================================
+   SHOW USER
+===================================================== */
+
+if(currentUser){
+
+    const name =
+        currentUser.name ||
+        "Mayur Verma";
+
+    const role =
+        currentUser.role ||
+        "Administrator";
+
+    document.getElementById(
+        "userName"
+    ).textContent = name;
+
+    document.getElementById(
+        "userRole"
+    ).textContent = role;
+
+    document.getElementById(
+        "userAvatar"
+    ).textContent =
+        name.charAt(0).toUpperCase();
+
+}
+
+
+/* =====================================================
+   EMPLOYEE DATA
+===================================================== */
+
+let employees = [];
+
+let editingEmployeeId = null;
+
+let loginEmployeeId = null;
+
+
+/* =====================================================
+   LOAD EMPLOYEES
+===================================================== */
+
+async function loadEmployees(){
+
+    const table =
+        document.getElementById(
+            "employeesTable"
+        );
+
+    table.innerHTML = `
+        <tr>
+            <td
+                colspan="8"
+                class="empty"
+            >
+                Loading employees...
+            </td>
+        </tr>
+    `;
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/employees",
+                {
+                    cache:"no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.message ||
+                "Unable to load employees"
+            );
+
+        }
+
+
+        employees =
+            data.employees || [];
+
+
+        renderEmployees(
+            employees
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        table.innerHTML = `
+            <tr>
+                <td
+                    colspan="8"
+                    class="empty"
+                >
+                    ${escapeHtml(
+                        error.message
+                    )}
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   RENDER EMPLOYEES
+===================================================== */
+
+function renderEmployees(list){
+
+    const table =
+        document.getElementById(
+            "employeesTable"
+        );
+
+
+    if(
+        !list ||
+        list.length === 0
+    ){
+
+        table.innerHTML = `
+            <tr>
+                <td
+                    colspan="8"
+                    class="empty"
+                >
+                    No employees found.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    table.innerHTML = "";
+
+
+    list.forEach(employee => {
+
+
+        const row =
+            document.createElement(
+                "tr"
+            );
+
+
+        const statusClass =
+            employee.status === "Active"
+            ? "active"
+            : "inactive";
+
+
+        row.innerHTML = `
+
+            <td>
+
+                <div class="employee-name">
+
+                    ${escapeHtml(
+                        employee.name || "-"
+                    )}
+
+                </div>
+
+
+                <div class="employee-email">
+
+                    ${escapeHtml(
+                        employee.email ||
+                        "No login account"
+                    )}
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <span class="code">
+
+                    ${escapeHtml(
+                        employee.employee_code ||
+                        "-"
+                    )}
+
+                </span>
+
+            </td>
+
+
+            <td>
+
+                ${escapeHtml(
+                    employee.department ||
+                    "-"
+                )}
+
+            </td>
+
+
+            <td>
+
+                ${escapeHtml(
+                    employee.designation ||
+                    "-"
+                )}
+
+            </td>
+
+
+            <td>
+
+                ${escapeHtml(
+                    employee.phone ||
+                    "-"
+                )}
+
+            </td>
+
+
+            <td>
+
+                ${escapeHtml(
+                    employee.joining_date ||
+                    "-"
+                )}
+
+            </td>
+
+
+            <td>
+
+                <span
+                    class="status ${statusClass}"
+                >
+
+                    ${escapeHtml(
+                        employee.status ||
+                        "Active"
+                    )}
+
+                </span>
+
+            </td>
+
+
+            <td>
+
+                <div class="actions">
+
+
+                    ${
+                        employee.user_id
+
+                        ?
+
+                        `
+                        <span
+                            style="
+                                color:#35e89b;
+                                font-size:11px;
+                                padding:7px 8px;
+                                white-space:nowrap;
+                            "
+                        >
+                            🔐 Login
+                        </span>
+                        `
+
+                        :
+
+                        `
+                        <button
+                            class="action-btn"
+                            style="color:#43d7ff;"
+                            title="Create Login"
+                            onclick="openLoginModal(${employee.id})"
+                        >
+                            🔐
+                        </button>
+                        `
+                    }
+
+
+                    <button
+                        class="action-btn edit-btn"
+                        title="Edit"
+                        onclick="editEmployee(${employee.id})"
+                    >
+                        ✏️
+                    </button>
+
+
+                    <button
+                        class="action-btn delete-btn"
+                        title="Delete"
+                        onclick="deleteEmployee(${employee.id})"
+                    >
+                        🗑️
+                    </button>
+
+
+                </div>
+
+            </td>
+
+        `;
+
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+/* =====================================================
+   SEARCH / FILTER
+===================================================== */
+
+function filterEmployees(){
+
+    const search =
+        document.getElementById(
+            "searchInput"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    const status =
+        document.getElementById(
+            "statusFilter"
+        ).value;
+
+
+    const filtered =
+        employees.filter(
+            employee => {
+
+
+                const text = (
+
+                    employee.name || ""
+
+                ) + " " + (
+
+                    employee.email || ""
+
+                ) + " " + (
+
+                    employee.employee_code || ""
+
+                ) + " " + (
+
+                    employee.department || ""
+
+                ) + " " + (
+
+                    employee.designation || ""
+
+                ) + " " + (
+
+                    employee.phone || ""
+
+
+                ).toLowerCase();
+
+
+                const matchSearch =
+                    !search ||
+                    text.toLowerCase()
+                        .includes(search);
+
+
+                const matchStatus =
+                    !status ||
+                    employee.status === status;
+
+
+                return (
+                    matchSearch &&
+                    matchStatus
+                );
+
+            }
+        );
+
+
+    renderEmployees(
+        filtered
+    );
+
+}
+
+
+/* =====================================================
+   OPEN ADD MODAL
+===================================================== */
+
+function openAddModal(){
+
+    editingEmployeeId = null;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Add Employee";
+
+
+    document.getElementById(
+        "saveButton"
+    ).textContent =
+        "Add Employee";
+
+
+    document.getElementById(
+        "employeeForm"
+    ).reset();
+
+
+    document.getElementById(
+        "employeeStatus"
+    ).value =
+        "Active";
+
+
+    document.getElementById(
+        "passwordGroup"
+    ).style.display =
+        "flex";
+
+
+    document.getElementById(
+        "employeePassword"
+    ).required =
+        true;
+
+
+    document.getElementById(
+        "employeeModal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   CLOSE EMPLOYEE MODAL
+===================================================== */
+
+function closeModal(){
+
+    document.getElementById(
+        "employeeModal"
+    ).classList.remove(
+        "show"
+    );
+
+
+    editingEmployeeId = null;
+
+}
+
+
+/* =====================================================
+   EDIT EMPLOYEE
+===================================================== */
+
+function editEmployee(id){
+
+    const employee =
+        employees.find(
+            item =>
+                Number(item.id) ===
+                Number(id)
+        );
+
+
+    if(!employee){
+
+        showToast(
+            "Employee not found"
+        );
+
+        return;
+
+    }
+
+
+    editingEmployeeId =
+        employee.id;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Employee";
+
+
+    document.getElementById(
+        "saveButton"
+    ).textContent =
+        "Update Employee";
+
+
+    document.getElementById(
+        "employeeName"
+    ).value =
+        employee.name || "";
+
+
+    document.getElementById(
+        "employeeEmail"
+    ).value =
+        employee.email || "";
+
+
+    document.getElementById(
+        "employeeCode"
+    ).value =
+        employee.employee_code || "";
+
+
+    document.getElementById(
+        "department"
+    ).value =
+        employee.department || "";
+
+
+    document.getElementById(
+        "designation"
+    ).value =
+        employee.designation || "";
+
+
+    document.getElementById(
+        "phone"
+    ).value =
+        employee.phone || "";
+
+
+    document.getElementById(
+        "joiningDate"
+    ).value =
+        employee.joining_date || "";
+
+
+    document.getElementById(
+        "employeeStatus"
+    ).value =
+        employee.status || "Active";
+
+
+    document.getElementById(
+        "passwordGroup"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "employeePassword"
+    ).required =
+        false;
+
+
+    document.getElementById(
+        "employeePassword"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "employeeModal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   ADD / UPDATE EMPLOYEE
+===================================================== */
+
+async function saveEmployee(event){
+
+    event.preventDefault();
+
+
+    const name =
+        document.getElementById(
+            "employeeName"
+        ).value.trim();
+
+
+    const email =
+        document.getElementById(
+            "employeeEmail"
+        ).value.trim();
+
+
+    const password =
+        document.getElementById(
+            "employeePassword"
+        ).value;
+
+
+    const employeeCode =
+        document.getElementById(
+            "employeeCode"
+        ).value.trim();
+
+
+    const department =
+        document.getElementById(
+            "department"
+        ).value.trim();
+
+
+    const designation =
+        document.getElementById(
+            "designation"
+        ).value.trim();
+
+
+    const phone =
+        document.getElementById(
+            "phone"
+        ).value.trim();
+
+
+    const joiningDate =
+        document.getElementById(
+            "joiningDate"
+        ).value;
+
+
+    const status =
+        document.getElementById(
+            "employeeStatus"
+        ).value;
+
+
+    if(!name){
+
+        showToast(
+            "Employee name is required"
+        );
+
+        return;
+
+    }
+
+
+    if(!employeeCode){
+
+        showToast(
+            "Employee code is required"
+        );
+
+        return;
+
+    }
+
+
+    if(
+        !editingEmployeeId &&
+        (!email || !password)
+    ){
+
+        showToast(
+            "Email and password are required for login"
+        );
+
+        return;
+
+    }
+
+
+    const payload = {
+
+        name:name,
+
+        email:email,
+
+        password:password,
+
+        employee_code:
+            employeeCode,
+
+        department:
+            department,
+
+        designation:
+            designation,
+
+        phone:
+            phone,
+
+        joining_date:
+            joiningDate || null,
+
+        status:
+            status
+
+    };
+
+
+    const isEdit =
+        Boolean(
+            editingEmployeeId
+        );
+
+
+    const url =
+        isEdit
+
+        ?
+
+        `/api/employees/${editingEmployeeId}`
+
+        :
+
+        "/api/employees";
+
+
+    const method =
+        isEdit
+        ? "PUT"
+        : "POST";
+
+
+    const button =
+        document.getElementById(
+            "saveButton"
+        );
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "Saving...";
+
+
+    try{
+
+
+        const response =
+            await fetch(
+                url,
+                {
+
+                    method:method,
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            payload
+                        )
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.message ||
+                "Unable to save employee"
+            );
+
+        }
+
+
+        closeModal();
+
+
+        showToast(
+
+            isEdit
+
+            ?
+
+            "Employee updated successfully"
+
+            :
+
+            "Employee added successfully"
+
+        );
+
+
+        await loadEmployees();
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+            error.message
+        );
+
+    }
+    finally{
+
+        button.disabled = false;
+
+        button.textContent =
+            isEdit
+            ? "Update Employee"
+            : "Add Employee";
+
+    }
+
+}
+
+
+/* =====================================================
+   DELETE EMPLOYEE
+===================================================== */
+
+async function deleteEmployee(id){
+
+    const employee =
+        employees.find(
+            item =>
+                Number(item.id) ===
+                Number(id)
+        );
+
+
+    if(!employee){
+
+        showToast(
+            "Employee not found"
+        );
+
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+            `Delete employee "${employee.name}"?\n\nTheir employee login account will also be deleted.`
+        );
+
+
+    if(!confirmed){
+
+        return;
+
+    }
+
+
+    try{
+
+
+        const response =
+            await fetch(
+                `/api/employees/${id}`,
+                {
+                    method:"DELETE"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.message ||
+                "Unable to delete employee"
+            );
+
+        }
+
+
+        showToast(
+            "Employee deleted successfully"
+        );
+
+
+        await loadEmployees();
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   OPEN CREATE LOGIN
+===================================================== */
+
+function openLoginModal(id){
+
+    const employee =
+        employees.find(
+            item =>
+                Number(item.id) ===
+                Number(id)
+        );
+
+
+    if(!employee){
+
+        showToast(
+            "Employee not found"
+        );
+
+        return;
+
+    }
+
+
+    if(employee.user_id){
+
+        showToast(
+            "This employee already has a login"
+        );
+
+        return;
+
+    }
+
+
+    loginEmployeeId =
+        employee.id;
+
+
+    document.getElementById(
+        "loginEmployeeName"
+    ).value =
+        employee.name || "";
+
+
+    document.getElementById(
+        "loginEmail"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "loginPassword"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "loginModal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   CLOSE LOGIN MODAL
+===================================================== */
+
+function closeLoginModal(){
+
+    document.getElementById(
+        "loginModal"
+    ).classList.remove(
+        "show"
+    );
+
+
+    loginEmployeeId = null;
+
+}
+
+
+/* =====================================================
+   CREATE EMPLOYEE LOGIN
+===================================================== */
+
+async function createEmployeeLogin(event){
+
+    event.preventDefault();
+
+
+    if(!loginEmployeeId){
+
+        showToast(
+            "Employee not selected"
+        );
+
+        return;
+
+    }
+
+
+    const email =
+        document.getElementById(
+            "loginEmail"
+        ).value.trim();
+
+
+    const password =
+        document.getElementById(
+            "loginPassword"
+        ).value;
+
+
+    if(!email){
+
+        showToast(
+            "Email is required"
+        );
+
+        return;
+
+    }
+
+
+    if(!password){
+
+        showToast(
+            "Password is required"
+        );
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "createLoginButton"
+        );
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "Creating...";
+
+
+    try{
+
+
+        const response =
+            await fetch(
+                `/api/employees/${loginEmployeeId}/create-login`,
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            email:email,
+
+                            password:password
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.message ||
+                "Unable to create login"
+            );
+
+        }
+
+
+        closeLoginModal();
+
+
+        showToast(
+            "Employee login created successfully"
+        );
+
+
+        await loadEmployees();
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+            error.message ||
+            "Unable to create login"
+        );
+
+    }
+    finally{
+
+        button.disabled = false;
+
+        button.textContent =
+            "Create Login";
+
+    }
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showToast(message){
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        () => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        2500
+    );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+    localStorage.removeItem(
+        "scmsUser"
+    );
+
+    window.location.href =
+        "/login";
+
+}
+
+
+/* =====================================================
+   CLOSE MODALS BY OUTSIDE CLICK
+===================================================== */
+
+document.getElementById(
+    "employeeModal"
+).addEventListener(
+    "click",
+    function(event){
+
+        if(event.target === this){
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+document.getElementById(
+    "loginModal"
+).addEventListener(
+    "click",
+    function(event){
+
+        if(event.target === this){
+
+            closeLoginModal();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadEmployees();
+
+</script>
+
+</body>
+
+</html>

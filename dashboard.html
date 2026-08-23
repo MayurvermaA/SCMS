@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Mayur Tech - Dashboard</title>
+
+<style>
+
+/* =====================================================
+   RESET
+===================================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#080b16;
+    color:white;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar{
+    position:fixed;
+
+    left:0;
+    top:0;
+    bottom:0;
+
+    width:250px;
+    height:100vh;
+
+    padding:25px 16px 105px;
+
+    background:#0d1120;
+
+    border-right:1px solid #20263a;
+
+    overflow-y:auto;
+
+    z-index:1000;
+
+    scrollbar-width:thin;
+    scrollbar-color:#303750 #0d1120;
+}
+
+.sidebar::-webkit-scrollbar{
+    width:7px;
+}
+
+.sidebar::-webkit-scrollbar-track{
+    background:#0d1120;
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+    background:#303750;
+    border-radius:10px;
+}
+
+
+/* =====================================================
+   BRAND
+===================================================== */
+
+.brand{
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:5px 12px 30px;
+}
+
+.brand-logo{
+    width:55px;
+    height:55px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6c63ff,
+            #00d4ff
+        );
+
+    font-size:20px;
+
+    font-weight:bold;
+}
+
+.brand-name{
+    font-size:23px;
+
+    font-weight:bold;
+}
+
+.company-name{
+    color:#68728d;
+
+    font-size:10px;
+
+    margin-top:3px;
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+.menu-title{
+    margin:18px 12px 10px;
+
+    color:#68728d;
+
+    font-size:11px;
+
+    text-transform:uppercase;
+}
+
+.menu{
+    list-style:none;
+}
+
+.menu li{
+    margin-bottom:6px;
+}
+
+.menu a{
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px 16px;
+
+    color:#9ca5bd;
+
+    text-decoration:none;
+
+    border-radius:12px;
+
+    transition:.25s;
+}
+
+.menu a:hover{
+    color:white;
+
+    background:
+        rgba(
+            108,
+            99,
+            255,
+            .12
+        );
+}
+
+.menu a.active{
+    color:white;
+
+    background:
+        rgba(
+            108,
+            99,
+            255,
+            .18
+        );
+
+    box-shadow:
+        inset 3px 0 0 #6c63ff;
+}
+
+.menu-icon{
+    width:24px;
+
+    min-width:24px;
+
+    text-align:center;
+
+    font-size:19px;
+}
+
+.menu-text{
+    font-size:15px;
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+.logout{
+    position:fixed;
+
+    left:16px;
+
+    bottom:20px;
+
+    width:218px;
+
+    padding-top:10px;
+
+    background:#0d1120;
+
+    z-index:1100;
+}
+
+.logout button{
+    width:100%;
+
+    padding:13px;
+
+    border:
+        1px solid #303750;
+
+    border-radius:12px;
+
+    background:#0d1120;
+
+    color:#ff8585;
+
+    cursor:pointer;
+
+    font-size:14px;
+}
+
+.logout button:hover{
+    background:
+        rgba(
+            255,
+            70,
+            70,
+            .08
+        );
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.main{
+    width:
+        calc(
+            100% - 250px
+        );
+
+    margin-left:250px;
+
+    min-height:100vh;
+
+    overflow-y:auto;
+
+    scrollbar-width:thin;
+
+    scrollbar-color:
+        #303750
+        #080b16;
+}
+
+.main::-webkit-scrollbar{
+    width:8px;
+}
+
+.main::-webkit-scrollbar-track{
+    background:#080b16;
+}
+
+.main::-webkit-scrollbar-thumb{
+    background:#303750;
+
+    border-radius:10px;
+}
+
+
+/* =====================================================
+   TOPBAR
+===================================================== */
+
+.topbar{
+    min-height:82px;
+
+    padding:0 35px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    border-bottom:
+        1px solid #20263a;
+
+    background:
+        rgba(
+            8,
+            11,
+            22,
+            .96
+        );
+
+    position:sticky;
+
+    top:0;
+
+    z-index:500;
+}
+
+.page-title{
+    font-size:25px;
+
+    font-weight:bold;
+}
+
+.user-area{
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+}
+
+.user-info{
+    text-align:right;
+}
+
+.user-name{
+    font-size:15px;
+
+    font-weight:bold;
+}
+
+.user-role{
+    color:#7d87a1;
+
+    font-size:12px;
+
+    margin-top:4px;
+}
+
+.user-avatar{
+    width:46px;
+    height:46px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6c63ff,
+            #00d4ff
+        );
+
+    font-weight:bold;
+}
+
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.content{
+    padding:35px;
+
+    min-height:
+        calc(
+            100vh - 82px
+        );
+}
+
+.welcome{
+    margin-bottom:28px;
+}
+
+.welcome h1{
+    font-size:38px;
+
+    margin-bottom:8px;
+}
+
+.welcome p{
+    color:#7f89a3;
+
+    font-size:15px;
+}
+
+
+/* =====================================================
+   STAT CARDS
+===================================================== */
+
+.stats{
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:18px;
+
+    margin-bottom:25px;
+}
+
+.stat-card{
+    background:#111628;
+
+    border:
+        1px solid #20263a;
+
+    border-radius:18px;
+
+    padding:23px;
+
+    transition:.25s;
+}
+
+.stat-card:hover{
+    transform:
+        translateY(-3px);
+
+    border-color:#303750;
+}
+
+.stat-top{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:18px;
+}
+
+.stat-icon{
+    width:45px;
+    height:45px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:12px;
+
+    background:
+        rgba(
+            108,
+            99,
+            255,
+            .13
+        );
+
+    font-size:21px;
+}
+
+.stat-label{
+    color:#68728d;
+
+    font-size:12px;
+}
+
+.stat-number{
+    font-size:30px;
+
+    font-weight:bold;
+}
+
+
+/* =====================================================
+   MAIN GRID
+===================================================== */
+
+.dashboard-grid{
+    display:grid;
+
+    grid-template-columns:
+        minmax(
+            0,
+            1.5fr
+        )
+        minmax(
+            280px,
+            .8fr
+        );
+
+    gap:20px;
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.card{
+    background:#111628;
+
+    border:
+        1px solid #20263a;
+
+    border-radius:18px;
+
+    padding:23px;
+}
+
+.card-header{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:20px;
+}
+
+.card-title{
+    font-size:18px;
+
+    font-weight:bold;
+}
+
+.view-btn{
+    color:#8d87ff;
+
+    font-size:12px;
+
+    text-decoration:none;
+}
+
+.view-btn:hover{
+    color:white;
+}
+
+
+/* =====================================================
+   PROJECT TABLE
+===================================================== */
+
+.table-wrapper{
+    width:100%;
+
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+
+    border-collapse:collapse;
+
+    min-width:650px;
+}
+
+th{
+    padding:
+        13px 10px;
+
+    text-align:left;
+
+    color:#68728d;
+
+    font-size:11px;
+
+    font-weight:normal;
+
+    border-bottom:
+        1px solid #20263a;
+}
+
+td{
+    padding:
+        16px 10px;
+
+    border-bottom:
+        1px solid #1c2234;
+
+    font-size:13px;
+}
+
+tr:last-child td{
+    border-bottom:none;
+}
+
+.project-name{
+    font-weight:bold;
+
+    color:#e8ebf4;
+}
+
+.client{
+    color:#7f89a3;
+
+    font-size:12px;
+
+    margin-top:4px;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status{
+    display:inline-block;
+
+    padding:
+        6px 10px;
+
+    border-radius:20px;
+
+    font-size:10px;
+
+    font-weight:bold;
+}
+
+.status-pending{
+    background:
+        rgba(
+            255,
+            190,
+            60,
+            .12
+        );
+
+    color:#ffc85c;
+}
+
+.status-active{
+    background:
+        rgba(
+            0,
+            220,
+            130,
+            .12
+        );
+
+    color:#35e89b;
+}
+
+.status-completed{
+    background:
+        rgba(
+            0,
+            190,
+            255,
+            .12
+        );
+
+    color:#43d7ff;
+}
+
+.status-cancelled{
+    background:
+        rgba(
+            255,
+            80,
+            80,
+            .12
+        );
+
+    color:#ff8585;
+}
+
+
+/* =====================================================
+   QUICK ACTIONS
+===================================================== */
+
+.quick-actions{
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            1fr
+        );
+
+    gap:12px;
+}
+
+.quick-action{
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:9px;
+
+    min-height:115px;
+
+    padding:15px;
+
+    border:
+        1px solid #20263a;
+
+    border-radius:13px;
+
+    background:#0b0f1d;
+
+    color:#cbd1df;
+
+    text-decoration:none;
+
+    transition:.25s;
+}
+
+.quick-action:hover{
+    background:
+        rgba(
+            108,
+            99,
+            255,
+            .10
+        );
+
+    border-color:#353d59;
+
+    transform:
+        translateY(-2px);
+}
+
+.quick-icon{
+    font-size:27px;
+}
+
+.quick-text{
+    font-size:12px;
+}
+
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.empty{
+    text-align:center;
+
+    color:#68728d;
+
+    padding:35px 10px;
+}
+
+
+/* =====================================================
+   COMPANY CARD
+===================================================== */
+
+.company-card{
+    margin-top:20px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+    padding:25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(
+                108,
+                99,
+                255,
+                .12
+            ),
+            rgba(
+                0,
+                212,
+                255,
+                .06
+            )
+        );
+
+    border:
+        1px solid #20263a;
+
+    border-radius:18px;
+}
+
+.company-info h2{
+    font-size:20px;
+
+    margin-bottom:7px;
+}
+
+.company-info p{
+    color:#7f89a3;
+
+    font-size:13px;
+}
+
+.company-location{
+    color:#a8b0c3;
+
+    font-size:13px;
+
+    text-align:right;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:1100px){
+
+    .stats{
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+    }
+
+    .dashboard-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:900px){
+
+    .sidebar{
+        width:80px;
+    }
+
+    .brand-name,
+    .company-name,
+    .menu-title,
+    .menu-text{
+        display:none;
+    }
+
+    .brand{
+        justify-content:center;
+    }
+
+    .menu a{
+        justify-content:center;
+    }
+
+    .logout{
+        left:8px;
+
+        width:64px;
+    }
+
+    .main{
+        width:
+            calc(
+                100% - 80px
+            );
+
+        margin-left:80px;
+    }
+
+    .content{
+        padding:
+            25px 20px;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .topbar{
+        padding:
+            0 20px;
+    }
+
+    .user-info{
+        display:none;
+    }
+
+    .welcome h1{
+        font-size:30px;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .company-card{
+        flex-direction:column;
+
+        align-items:flex-start;
+    }
+
+    .company-location{
+        text-align:left;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            SC
+        </div>
+
+        <div>
+
+            <div class="brand-name">
+                SCMS
+            </div>
+
+            <div class="company-name">
+                Mayur Tech
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="menu-title">
+        Main Menu
+    </div>
+
+
+    <ul class="menu">
+
+
+        <li>
+
+            <a
+                href="/dashboard"
+                class="active"
+            >
+
+                <span class="menu-icon">
+                    🏠
+                </span>
+
+                <span class="menu-text">
+                    Dashboard
+                </span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="/employees">
+
+                <span class="menu-icon">
+                    👨‍💻
+                </span>
+
+                <span class="menu-text">
+                    Employees
+                </span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="/projects">
+
+                <span class="menu-icon">
+                    📁
+                </span>
+
+                <span class="menu-text">
+                    Projects
+                </span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="/tasks">
+
+                <span class="menu-icon">
+                    ✅
+                </span>
+
+                <span class="menu-text">
+                    Tasks
+                </span>
+
+            </a>
+
+        </li>
+
+
+    </ul>
+
+
+    <!-- ACCOUNT MENU -->
+
+    <div class="menu-title">
+        Account
+    </div>
+
+
+    <ul class="menu">
+
+
+        <li>
+
+            <a href="/profile">
+
+                <span class="menu-icon">
+                    👤
+                </span>
+
+                <span class="menu-text">
+                    Profile
+                </span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="/about">
+
+                <span class="menu-icon">
+                    ℹ️
+                </span>
+
+                <span class="menu-text">
+                    About
+                </span>
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="/settings">
+
+                <span class="menu-icon">
+                    ⚙️
+                </span>
+
+                <span class="menu-text">
+                    Settings
+                </span>
+
+            </a>
+
+        </li>
+
+
+    </ul>
+
+
+</aside>
+
+
+<!-- =====================================================
+     LOGOUT
+===================================================== -->
+
+<div class="logout">
+
+    <button onclick="logout()">
+        🚪 Logout
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+
+        <div class="page-title">
+            Dashboard
+        </div>
+
+
+        <div class="user-area">
+
+
+            <div class="user-info">
+
+                <div
+                    class="user-name"
+                    id="userName"
+                >
+                    Mayur Verma
+                </div>
+
+
+                <div
+                    class="user-role"
+                    id="userRole"
+                >
+                    Administrator
+                </div>
+
+            </div>
+
+
+            <div
+                class="user-avatar"
+                id="userAvatar"
+            >
+                M
+            </div>
+
+
+        </div>
+
+
+    </header>
+
+
+    <!-- CONTENT -->
+
+    <section class="content">
+
+
+        <!-- WELCOME -->
+
+        <div class="welcome">
+
+            <h1 id="welcomeTitle">
+                Welcome back, Mayur Verma 👋
+            </h1>
+
+            <p>
+                Here's what's happening with
+                Mayur Tech today.
+            </p>
+
+        </div>
+
+
+        <!-- STATS -->
+
+        <div class="stats">
+
+
+            <!-- EMPLOYEES -->
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-label">
+                        Employees
+                    </div>
+
+                    <div class="stat-icon">
+                        👨‍💻
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="employeesCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <!-- PROJECTS -->
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-label">
+                        Projects
+                    </div>
+
+                    <div class="stat-icon">
+                        📁
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="projectsCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <!-- TASKS -->
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-label">
+                        Tasks
+                    </div>
+
+                    <div class="stat-icon">
+                        ✅
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="tasksCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <!-- ACTIVE PROJECTS -->
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-label">
+                        Active Projects
+                    </div>
+
+                    <div class="stat-icon">
+                        🚀
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="activeProjectsCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- DASHBOARD GRID -->
+
+        <div class="dashboard-grid">
+
+
+            <!-- RECENT PROJECTS -->
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <div class="card-title">
+                        Recent Projects
+                    </div>
+
+                    <a
+                        href="/projects"
+                        class="view-btn"
+                    >
+                        View All →
+                    </a>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Project
+                                </th>
+
+                                <th>
+                                    Client
+                                </th>
+
+                                <th>
+                                    Deadline
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody
+                            id="projectsTable"
+                        >
+
+                            <tr>
+
+                                <td
+                                    colspan="4"
+                                    class="empty"
+                                >
+                                    Loading...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <div class="card-title">
+                        Quick Actions
+                    </div>
+
+                </div>
+
+
+                <div class="quick-actions">
+
+
+                    <a
+                        href="/employees"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-icon">
+                            👨‍💻
+                        </div>
+
+                        <div class="quick-text">
+                            Employees
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="/projects"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-icon">
+                            📁
+                        </div>
+
+                        <div class="quick-text">
+                            Projects
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="/tasks"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-icon">
+                            ✅
+                        </div>
+
+                        <div class="quick-text">
+                            Tasks
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="/profile"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-icon">
+                            👤
+                        </div>
+
+                        <div class="quick-text">
+                            My Profile
+                        </div>
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- COMPANY -->
+
+        <div class="company-card">
+
+
+            <div class="company-info">
+
+                <h2>
+                    🏢 Mayur Tech
+                </h2>
+
+                <p>
+                    Software Company Management System
+                </p>
+
+            </div>
+
+
+            <div class="company-location">
+
+                📍 Dadiyapura, Jhansi
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<script>
+
+/* =====================================================
+   USER
+===================================================== */
+
+const savedUser =
+    localStorage.getItem(
+        "scmsUser"
+    );
+
+
+if(!savedUser){
+
+    window.location.href =
+        "/login";
+
+}
+
+
+let user = null;
+
+
+try{
+
+    user =
+        JSON.parse(
+            savedUser
+        );
+
+}catch(error){
+
+    localStorage.removeItem(
+        "scmsUser"
+    );
+
+    window.location.href =
+        "/login";
+
+}
+
+
+if(user){
+
+    const name =
+        user.name ||
+        "Mayur Verma";
+
+    const role =
+        user.role ||
+        "Administrator";
+
+
+    document.getElementById(
+        "userName"
+    ).textContent =
+        name;
+
+
+    document.getElementById(
+        "userRole"
+    ).textContent =
+        role;
+
+
+    document.getElementById(
+        "userAvatar"
+    ).textContent =
+        name
+        .charAt(0)
+        .toUpperCase();
+
+
+    document.getElementById(
+        "welcomeTitle"
+    ).textContent =
+        `Welcome back, ${name} 👋`;
+
+}
+
+
+/* =====================================================
+   DASHBOARD DATA
+===================================================== */
+
+async function loadDashboard(){
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/dashboard",
+                {
+                    cache:"no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.message ||
+                "Unable to load dashboard"
+            );
+
+        }
+
+
+        const stats =
+            data.stats || {};
+
+
+        document.getElementById(
+            "employeesCount"
+        ).textContent =
+            stats.employees || 0;
+
+
+        document.getElementById(
+            "projectsCount"
+        ).textContent =
+            stats.projects || 0;
+
+
+        document.getElementById(
+            "tasksCount"
+        ).textContent =
+            stats.tasks || 0;
+
+
+        document.getElementById(
+            "activeProjectsCount"
+        ).textContent =
+            stats.active_projects || 0;
+
+
+        renderProjects(
+            data.recent_projects || []
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Dashboard error:",
+            error
+        );
+
+
+        document.getElementById(
+            "projectsTable"
+        ).innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="4"
+                    class="empty"
+                >
+                    Unable to load dashboard data.
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   RENDER PROJECTS
+===================================================== */
+
+function renderProjects(projects){
+
+    const table =
+        document.getElementById(
+            "projectsTable"
+        );
+
+
+    if(
+        !projects ||
+        projects.length === 0
+    ){
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="4"
+                    class="empty"
+                >
+                    No projects available.
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    table.innerHTML = "";
+
+
+    projects.forEach(
+        project => {
+
+            let statusClass =
+                "status-pending";
+
+
+            if(
+                project.status ===
+                "Active"
+            ){
+
+                statusClass =
+                    "status-active";
+
+            }else if(
+                project.status ===
+                "Completed"
+            ){
+
+                statusClass =
+                    "status-completed";
+
+            }else if(
+                project.status ===
+                "Cancelled"
+            ){
+
+                statusClass =
+                    "status-cancelled";
+
+            }
+
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            row.innerHTML = `
+
+                <td>
+
+                    <div class="project-name">
+                        ${escapeHtml(
+                            project.project_name ||
+                            "-"
+                        )}
+                    </div>
+
+                    <div class="client">
+                        ${escapeHtml(
+                            project.description ||
+                            ""
+                        )}
+                    </div>
+
+                </td>
+
+
+                <td>
+                    ${escapeHtml(
+                        project.client_name ||
+                        "-"
+                    )}
+                </td>
+
+
+                <td>
+                    ${escapeHtml(
+                        project.deadline ||
+                        "-"
+                    )}
+                </td>
+
+
+                <td>
+
+                    <span
+                        class="status ${statusClass}"
+                    >
+                        ${escapeHtml(
+                            project.status ||
+                            "Pending"
+                        )}
+                    </span>
+
+                </td>
+
+            `;
+
+
+            table.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+    localStorage.removeItem(
+        "scmsUser"
+    );
+
+    window.location.href =
+        "/login";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadDashboard();
+
+</script>
+
+</body>
+
+</html>
