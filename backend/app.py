@@ -49,10 +49,15 @@ def dashboard_page():
     return send_from_directory(FRONTEND_DIR, "dashboard.html")
 
 
+
 @app.route("/employees")
 def employees_page():
     return send_from_directory(FRONTEND_DIR, "employees.html")
 
+
+@app.route("/employee-dashboard")
+def employee_dashboard_page():
+    return send_from_directory(FRONTEND_DIR, "employee-dashboard.html")
 
 @app.route("/projects")
 def projects_page():
@@ -215,7 +220,7 @@ def login():
                 "message": "Invalid email or password"
             }), 401
 
-        return jsonify({
+        response = {
             "success": True,
             "message": "Login successful",
             "user": {
@@ -224,10 +229,46 @@ def login():
                 "email": user["email"],
                 "role": user["role"]
             }
-        })
+        }
+
+        # Employee login
+        if user["role"] == "employee":
+
+            cursor.execute("""
+                SELECT
+                    e.id,
+                    e.user_id,
+                    u.name,
+                    u.email,
+                    e.employee_code,
+                    e.department,
+                    e.designation,
+                    e.phone,
+                    e.joining_date,
+                    e.status
+                FROM employees e
+                LEFT JOIN users u
+                    ON e.user_id = u.id
+                WHERE e.user_id = %s
+                LIMIT 1
+            """, (user["id"],))
+
+            employee = cursor.fetchone()
+
+            if employee:
+                if employee.get("joining_date"):
+                    employee["joining_date"] = str(
+                        employee["joining_date"]
+                    )
+
+                response["employee"] = employee
+                response["redirect"] = "/employee-dashboard"
+
+        return jsonify(response)
 
     except Exception as e:
         print("LOGIN ERROR:", e)
+
         return jsonify({
             "success": False,
             "message": "Login failed",
@@ -236,7 +277,6 @@ def login():
 
     finally:
         close_db(connection, cursor)
-
 
 # =========================================================
 # DASHBOARD
