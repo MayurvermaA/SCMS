@@ -45,8 +45,8 @@ def home():
     })
 
 
-@app.route("/login")
-def login_page():
+@app.route("/")
+def home():
     return send_from_directory(FRONTEND_DIR, "login.html")
 
 
