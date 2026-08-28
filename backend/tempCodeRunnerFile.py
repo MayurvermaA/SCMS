@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from psycopg2.extras import RealDictCursor
-from backend.database import get_connection
+from database import get_connection
 import os
 
 # =========================================================
