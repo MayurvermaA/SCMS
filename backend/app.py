@@ -36,17 +36,11 @@ def close_db(connection, cursor=None):
 
 @app.route("/")
 def home():
-    return jsonify({
-        "success": True,
-        "message": "SCMS API is running 🚀",
-        "company": "Mayur Tech",
-        "location": "Dadiyapura, Jhansi",
-        "version": "PostgreSQL"
-    })
+    return send_from_directory(FRONTEND_DIR, "login.html")
 
 
-@app.route("/")
-def home():
+@app.route("/login")
+def login_page():
     return send_from_directory(FRONTEND_DIR, "login.html")
 
 
