@@ -57,7 +57,7 @@ def dashboard_page():
 
 @app.route("/employees")
 def employees_page():
-    return send_from_directory(FRONTEND_DIR, "employee.html")
+    return send_from_directory(FRONTEND_DIR, "employees.html")
 
 
 @app.route("/projects")
