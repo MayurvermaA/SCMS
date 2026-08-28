@@ -1,22 +1,25 @@
-import mysql.connector
-from mysql.connector import Error
+import os
+import psycopg2
+from psycopg2 import Error
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def get_connection():
     try:
-        connection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="Mayur@28",
-            database="scms_db",
-            port=3306
+        connection = psycopg2.connect(
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT", "5432")),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
         )
 
-        if connection.is_connected():
-            print("MySQL Connected Successfully!")
-            return connection
+        print("PostgreSQL Connected Successfully!")
+        return connection
 
     except Error as e:
-        print("MySQL Connection Error:", e)
+        print("PostgreSQL Connection Error:", e)
 
     return None
