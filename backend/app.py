@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, send_from_directory
-from flask import Flask, jsonify, request, send_from_directory, render_template
 from flask_cors import CORS
+from psycopg2.extras import RealDictCursor
 from database import get_connection
 import os
 
@@ -70,7 +70,7 @@ def employee_by_user(user_id):
 
     try:
 
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute("""
             SELECT
@@ -147,7 +147,7 @@ def employee_projects(user_id):
 
     try:
 
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute("""
             SELECT
@@ -347,7 +347,7 @@ def test_database():
     try:
         cursor = connection.cursor()
 
-        cursor.execute("SELECT DATABASE()")
+        cursor.execute("SELECT current_database()")
 
         result = cursor.fetchone()
 
@@ -357,7 +357,7 @@ def test_database():
 
         return jsonify({
             "success": True,
-            "message": "MySQL connected successfully",
+            "message": "PostgreSQL connected successfully",
             "database": database_name
         })
 
@@ -375,92 +375,6 @@ def test_database():
 # =========================================================
 # LOGIN API
 # =========================================================
-
-@app.route("/api/login", methods=["POST"])
-def login():
-
-    data = request.get_json(silent=True)
-
-    if not data:
-        return jsonify({
-            "success": False,
-            "message": "Request data is missing"
-        }), 400
-
-    email = data.get("email")
-    password = data.get("password")
-
-    if not email or not password:
-        return jsonify({
-            "success": False,
-            "message": "Email and password are required"
-        }), 400
-
-    connection = get_connection()
-
-    if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
-
-    cursor = None
-
-    try:
-
-        cursor = connection.cursor(dictionary=True)
-
-        cursor.execute(
-            """
-            SELECT
-                id,
-                name,
-                email,
-                password,
-                role
-            FROM users
-            WHERE email = %s
-            """,
-            (email,)
-        )
-
-        user = cursor.fetchone()
-
-        close_db(connection, cursor)
-
-        if user is None:
-            return jsonify({
-                "success": False,
-                "message": "Invalid email or password"
-            }), 401
-
-        if password != user["password"]:
-            return jsonify({
-                "success": False,
-                "message": "Invalid email or password"
-            }), 401
-
-        return jsonify({
-            "success": True,
-            "message": "Login successful",
-            "user": {
-                "id": user["id"],
-                "name": user["name"],
-                "email": user["email"],
-                "role": user["role"]
-            }
-        })
-
-    except Exception as e:
-
-        close_db(connection, cursor)
-
-        return jsonify({
-            "success": False,
-            "message": "Login failed",
-            "error": str(e)
-        }), 500
-
 
 # =========================================================
 # DASHBOARD API
@@ -481,7 +395,7 @@ def dashboard():
 
     try:
 
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         # Employees
         cursor.execute(
@@ -605,7 +519,7 @@ def create_employee_login(employee_id):
 
     try:
 
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         # Employee
         cursor.execute("""
@@ -653,13 +567,14 @@ def create_employee_login(employee_id):
                 (name, email, password, role)
             VALUES
                 (%s, %s, %s, 'employee')
+            RETURNING id
         """, (
             employee["name"],
             email,
             password
         ))
 
-        user_id = cursor.lastrowid
+        user_id = cursor.fetchone()["id"]
 
         # Automatically link employee
         cursor.execute("""
@@ -730,7 +645,7 @@ def login_api():
 
     try:
 
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute("""
             SELECT
@@ -873,7 +788,7 @@ def get_employees():
 
     cursor = None
     try:
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute("""
             SELECT e.id, e.name, e.user_id, e.employee_code,
                    e.department, e.designation, e.phone,
@@ -924,7 +839,7 @@ def add_employee():
 
     cursor = None
     try:
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
         if cursor.fetchone():
@@ -939,19 +854,21 @@ def add_employee():
         cursor.execute("""
             INSERT INTO users (name, email, password, role)
             VALUES (%s, %s, %s, %s)
+            RETURNING id
         """, (name, email, password, "employee"))
-        user_id = cursor.lastrowid
+        user_id = cursor.fetchone()["id"]
 
         cursor.execute("""
             INSERT INTO employees
             (name, user_id, employee_code, department, designation,
              phone, joining_date, status)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
         """, (
             name, user_id, employee_code, department, designation,
             phone, joining_date, status
         ))
-        employee_id = cursor.lastrowid
+        employee_id = cursor.fetchone()["id"]
 
         connection.commit()
         close_db(connection, cursor)
@@ -1011,7 +928,7 @@ def update_employee(employee_id):
 
     cursor = None
     try:
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute(
             "SELECT user_id FROM employees WHERE id = %s",
@@ -1088,7 +1005,7 @@ def delete_employee(employee_id):
 
     cursor = None
     try:
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute(
             "SELECT user_id FROM employees WHERE id = %s",
@@ -1153,7 +1070,7 @@ def get_projects():
 
     try:
 
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute(
             """
@@ -1265,6 +1182,7 @@ def add_project():
                 %s,
                 %s
             )
+            RETURNING id
             """,
             (
                 project_name,
@@ -1276,9 +1194,8 @@ def add_project():
             )
         )
 
+        project_id = cursor.fetchone()["id"]
         connection.commit()
-
-        project_id = cursor.lastrowid
 
         close_db(connection, cursor)
 
@@ -1493,7 +1410,7 @@ def get_tasks():
 
     try:
 
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute(
             """
@@ -1615,6 +1532,7 @@ def add_task():
                 %s,
                 %s
             )
+            RETURNING id
             """,
             (
                 data.get("project_id") or None,
@@ -1627,9 +1545,8 @@ def add_task():
             )
         )
 
+        task_id = cursor.fetchone()["id"]
         connection.commit()
-
-        task_id = cursor.lastrowid
 
         close_db(connection, cursor)
 
@@ -1824,7 +1741,7 @@ def employee_tasks(user_id):
 
     try:
 
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute("""
             SELECT
@@ -2008,7 +1925,7 @@ def update_user_password(user_id):
 
     try:
 
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute(
             """
@@ -2095,7 +2012,7 @@ def get_today_attendance(user_id):
     try:
 
         cursor = connection.cursor(
-            dictionary=True
+            cursor_factory=RealDictCursor
         )
 
         cursor.execute("""
@@ -2110,7 +2027,7 @@ def get_today_attendance(user_id):
                 created_at
             FROM attendance
             WHERE user_id = %s
-            AND attendance_date = CURDATE()
+            AND attendance_date = CURRENT_DATE
             LIMIT 1
         """, (user_id,))
 
@@ -2186,7 +2103,7 @@ def attendance_check_in(user_id):
     try:
 
         cursor = connection.cursor(
-            dictionary=True
+            cursor_factory=RealDictCursor
         )
 
         cursor.execute("""
@@ -2197,7 +2114,7 @@ def attendance_check_in(user_id):
                 status
             FROM attendance
             WHERE user_id = %s
-            AND attendance_date = CURDATE()
+            AND attendance_date = CURRENT_DATE
             LIMIT 1
         """, (user_id,))
 
@@ -2237,7 +2154,7 @@ def attendance_check_in(user_id):
                 VALUES
                 (
                     %s,
-                    CURDATE(),
+                    CURRENT_DATE,
                     NOW(),
                     'Present',
                     0
@@ -2258,7 +2175,7 @@ def attendance_check_in(user_id):
                 created_at
             FROM attendance
             WHERE user_id = %s
-            AND attendance_date = CURDATE()
+            AND attendance_date = CURRENT_DATE
             LIMIT 1
         """, (user_id,))
 
@@ -2337,7 +2254,7 @@ def attendance_check_out(user_id):
     try:
 
         cursor = connection.cursor(
-            dictionary=True
+            cursor_factory=RealDictCursor
         )
 
         cursor.execute("""
@@ -2348,7 +2265,7 @@ def attendance_check_out(user_id):
                 status
             FROM attendance
             WHERE user_id = %s
-            AND attendance_date = CURDATE()
+            AND attendance_date = CURRENT_DATE
             LIMIT 1
         """, (user_id,))
 
@@ -2378,11 +2295,7 @@ def attendance_check_out(user_id):
                 check_out = NOW(),
                 working_hours =
                     ROUND(
-                        TIMESTAMPDIFF(
-                            MINUTE,
-                            check_in,
-                            NOW()
-                        ) / 60,
+                        (EXTRACT(EPOCH FROM (NOW() - check_in)) / 3600.0)::numeric,
                         2
                     )
             WHERE id = %s
@@ -2496,7 +2409,7 @@ def get_attendance_history(user_id):
 
     try:
 
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute("""
             SELECT
@@ -2569,7 +2482,6 @@ def get_attendance_history(user_id):
 # =========================================================
 
 if __name__ == "__main__":
-
     print()
     print("=" * 60)
     print("          MAYUR TECH - SCMS")
@@ -2587,16 +2499,4 @@ if __name__ == "__main__":
     print("Settings  : http://127.0.0.1:5000/settings")
     print("=" * 60)
     print()
-
-    app.run(
-        host="127.0.0.1",
-        port=5000,
-        debug=True
-    )
-    if __name__ == "__main__":
-     app.run(
-        host="127.0.0.1",
-        port=5000,
-        debug=False,
-        use_reloader=False
-    )   
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=False)
