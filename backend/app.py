@@ -59,6 +59,25 @@ def employees_page():
 def employee_dashboard_page():
     return send_from_directory(FRONTEND_DIR, "employee-dashboard.html")
 
+@app.route("/employee-profile")
+def employee_profile_page():
+    return send_from_directory(FRONTEND_DIR, "employee-profile.html")
+
+
+@app.route("/employee-projects")
+def employee_projects_page():
+    return send_from_directory(FRONTEND_DIR, "employee-projects.html")
+
+
+@app.route("/employee-tasks")
+def employee_tasks_page():
+    return send_from_directory(FRONTEND_DIR, "employee-tasks.html")
+
+
+@app.route("/employee-attendance")
+def employee_attendance_page():
+    return send_from_directory(FRONTEND_DIR, "employee-attendance.html")
+
 @app.route("/projects")
 def projects_page():
     return send_from_directory(FRONTEND_DIR, "projects.html")
