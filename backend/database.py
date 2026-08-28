@@ -6,13 +6,13 @@ load_dotenv()
 
 def get_connection():
     try:
-        database_url = os.getenv("DATABASE_URL")
-
-        if not database_url:
-            print("DATABASE_URL is missing")
-            return None
-
-        connection = psycopg2.connect(database_url)
+        connection = psycopg2.connect(
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT", "5432")),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
+        )
 
         print("PostgreSQL Connected Successfully!")
         return connection
