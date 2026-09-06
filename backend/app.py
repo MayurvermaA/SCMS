@@ -1,12 +1,13 @@
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from psycopg2.extras import RealDictCursor
-from backend.database import get_connection
+from database import get_connection
 import os
 
 # =========================================================
 # SCMS - Software Company Management System
-# PostgreSQL / Supabase version
+# Company  : Mayur Tech
+# Location : Dadiyapura, Jhansi
 # =========================================================
 
 app = Flask(__name__)
@@ -15,6 +16,10 @@ CORS(app)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
+
+# =========================================================
+# HELPER
+# =========================================================
 
 def close_db(connection, cursor=None):
     try:
@@ -29,25 +34,197 @@ def close_db(connection, cursor=None):
     except Exception:
         pass
 
-
-# =========================================================
-# PAGES
-# =========================================================
-
-@app.route("/")
-def home():
-    return send_from_directory(FRONTEND_DIR, "login.html")
-
-# =========================================================
-# FORGOT PASSWORD PAGE
-# =========================================================
-
 @app.route("/forgot-password")
 def forgot_password_page():
     return send_from_directory(
         FRONTEND_DIR,
         "forgot-password.html"
     )
+
+@app.route("/employee-dashboard")
+def employee_dashboard_page():
+    return send_from_directory(
+        FRONTEND_DIR,
+        "employee-dashboard.html"
+    )
+
+@app.route("/employee-profile")
+def employee_profile_page():
+    return send_from_directory(
+        FRONTEND_DIR,
+        "employee-profile.html"
+    )
+
+@app.route("/api/employees/user/<int:user_id>")
+def employee_by_user(user_id):
+
+    connection = get_connection()
+
+    if connection is None:
+        return jsonify({
+            "success": False,
+            "message": "Database connection failed"
+        }), 500
+
+    cursor = None
+
+    try:
+
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+
+        cursor.execute("""
+            SELECT
+                id,
+                name,
+                user_id,
+                employee_code,
+                department,
+                designation,
+                phone,
+                joining_date,
+                status
+            FROM employees
+            WHERE user_id = %s
+            LIMIT 1
+        """, (user_id,))
+
+        employee = cursor.fetchone()
+
+        if not employee:
+            return jsonify({
+                "success": False,
+                "message": "Employee profile not found"
+            }), 404
+
+        return jsonify({
+            "success": True,
+            "employee": employee
+        })
+
+    except Exception as e:
+
+        print("EMPLOYEE PROFILE ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        connection.close()
+
+@app.route("/employee-projects")
+def employee_projects_page():
+    return send_from_directory(
+        FRONTEND_DIR,
+        "employee-projects.html"
+    )
+
+
+@app.route("/employee-tasks")
+def employee_tasks_page():
+    return send_from_directory(
+        FRONTEND_DIR,
+        "employee-tasks.html"
+    )
+
+@app.route("/api/employee/projects/<int:user_id>", methods=["GET"])
+def employee_projects(user_id):
+
+    connection = get_connection()
+
+    if connection is None:
+        return jsonify({
+            "success": False,
+            "message": "Database connection failed"
+        }), 500
+
+    cursor = None
+
+    try:
+
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+
+        cursor.execute("""
+            SELECT
+                p.id,
+                p.project_name,
+                p.description,
+                p.client_name,
+                p.start_date,
+                p.deadline,
+                p.status,
+                p.created_at
+            FROM projects p
+            INNER JOIN tasks t
+                ON t.project_id = p.id
+            INNER JOIN employees e
+                ON t.employee_id = e.id
+            WHERE e.user_id = %s
+            GROUP BY
+                p.id,
+                p.project_name,
+                p.description,
+                p.client_name,
+                p.start_date,
+                p.deadline,
+                p.status,
+                p.created_at
+            ORDER BY p.id DESC
+        """, (user_id,))
+
+        projects = cursor.fetchall()
+
+        for project in projects:
+
+            if project.get("start_date"):
+                project["start_date"] = str(
+                    project["start_date"]
+                )
+
+            if project.get("deadline"):
+                project["deadline"] = str(
+                    project["deadline"]
+                )
+
+            if project.get("created_at"):
+                project["created_at"] = str(
+                    project["created_at"]
+                )
+
+        return jsonify({
+            "success": True,
+            "projects": projects
+        })
+
+    except Exception as e:
+
+        print("EMPLOYEE PROJECT ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        connection.close()        
+
+# =========================================================
+# BASIC PAGES
+# =========================================================
+
+@app.route("/")
+def home():
+    return send_from_directory(FRONTEND_DIR, "login.html")
+
 
 @app.route("/login")
 def login_page():
@@ -59,63 +236,50 @@ def dashboard_page():
     return send_from_directory(FRONTEND_DIR, "dashboard.html")
 
 
-
 @app.route("/employees")
 def employees_page():
     return send_from_directory(FRONTEND_DIR, "employees.html")
 
-
-@app.route("/employee-dashboard")
-def employee_dashboard_page():
-    return send_from_directory(FRONTEND_DIR, "employee-dashboard.html")
-
-@app.route("/employee-profile")
-def employee_profile_page():
-    return send_from_directory(FRONTEND_DIR, "employee-profile.html")
-
-
-@app.route("/employee-projects")
-def employee_projects_page():
-    return send_from_directory(FRONTEND_DIR, "employee-projects.html")
-
-
-@app.route("/employee-tasks")
-def employee_tasks_page():
-    return send_from_directory(FRONTEND_DIR, "employee-tasks.html")
-
-
-@app.route("/employee-attendance")
-def employee_attendance_page():
-    return send_from_directory(FRONTEND_DIR, "employee-attendance.html")
-
 @app.route("/projects")
 def projects_page():
-    return send_from_directory(FRONTEND_DIR, "projects.html")
+    file_path = os.path.join(FRONTEND_DIR, "projects.html")
+
+    if os.path.exists(file_path):
+        return send_from_directory(FRONTEND_DIR, "projects.html")
+
+    return "projects.html not found", 404
 
 
 @app.route("/tasks")
 def tasks_page():
-    return send_from_directory(FRONTEND_DIR, "tasks.html")
+    file_path = os.path.join(FRONTEND_DIR, "tasks.html")
 
+    if os.path.exists(file_path):
+        return send_from_directory(FRONTEND_DIR, "tasks.html")
+
+    return "tasks.html not found", 404
 
 @app.route("/profile")
 def profile_page():
     return send_from_directory(FRONTEND_DIR, "profile.html")
 
-
 @app.route("/settings")
 def settings_page():
     file_path = os.path.join(FRONTEND_DIR, "settings.html")
+
     if os.path.exists(file_path):
         return send_from_directory(FRONTEND_DIR, "settings.html")
+
     return "settings.html not found", 404
 
 
 @app.route("/about")
 def about_page():
     file_path = os.path.join(FRONTEND_DIR, "about.html")
+
     if os.path.exists(file_path):
         return send_from_directory(FRONTEND_DIR, "about.html")
+
     return """
     <!DOCTYPE html>
     <html>
@@ -132,6 +296,7 @@ def about_page():
                 color: white;
                 font-family: Arial;
             }
+
             .box {
                 width: 500px;
                 max-width: 90%;
@@ -141,12 +306,14 @@ def about_page():
                 border: 1px solid #20263a;
                 border-radius: 18px;
             }
+
             a {
                 color: #00d4ff;
                 text-decoration: none;
             }
         </style>
     </head>
+
     <body>
         <div class="box">
             <h1>Mayur Tech</h1>
@@ -166,6 +333,7 @@ def about_page():
 
 @app.route("/api/test-db")
 def test_database():
+
     connection = get_connection()
 
     if connection is None:
@@ -178,8 +346,14 @@ def test_database():
 
     try:
         cursor = connection.cursor()
+
         cursor.execute("SELECT current_database()")
-        database_name = cursor.fetchone()[0]
+
+        result = cursor.fetchone()
+
+        database_name = result[0]
+
+        close_db(connection, cursor)
 
         return jsonify({
             "success": True,
@@ -188,32 +362,144 @@ def test_database():
         })
 
     except Exception as e:
+
+        close_db(connection, cursor)
+
         return jsonify({
             "success": False,
             "message": "Database query failed",
             "error": str(e)
         }), 500
 
-    finally:
-        close_db(connection, cursor)
-
 
 # =========================================================
-# LOGIN
+# LOGIN API
 # =========================================================
 
-@app.route("/api/login", methods=["POST"])
-def login():
-    data = request.get_json(silent=True)
+# =========================================================
+# DASHBOARD API
+# =========================================================
 
-    if not data:
+@app.route("/api/dashboard")
+def dashboard():
+
+    connection = get_connection()
+
+    if connection is None:
         return jsonify({
             "success": False,
-            "message": "Request data is missing"
-        }), 400
+            "message": "Database connection failed"
+        }), 500
 
-    email = (data.get("email") or "").strip()
-    password = data.get("password") or ""
+    cursor = None
+
+    try:
+
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+
+        # Employees
+        cursor.execute(
+            "SELECT COUNT(*) AS total FROM employees"
+        )
+        employees = cursor.fetchone()["total"]
+
+        # Projects
+        cursor.execute(
+            "SELECT COUNT(*) AS total FROM projects"
+        )
+        projects = cursor.fetchone()["total"]
+
+        # Tasks
+        cursor.execute(
+            "SELECT COUNT(*) AS total FROM tasks"
+        )
+        tasks = cursor.fetchone()["total"]
+
+        # Active projects
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS total
+            FROM projects
+            WHERE status = 'Active'
+            """
+        )
+        active_projects = cursor.fetchone()["total"]
+
+        # Recent projects
+        cursor.execute(
+            """
+            SELECT
+                id,
+                project_name,
+                description,
+                client_name,
+                start_date,
+                deadline,
+                status,
+                created_at
+            FROM projects
+            ORDER BY id DESC
+            LIMIT 5
+            """
+        )
+
+        recent_projects = cursor.fetchall()
+
+        for project in recent_projects:
+
+            if project.get("start_date"):
+                project["start_date"] = str(project["start_date"])
+
+            if project.get("deadline"):
+                project["deadline"] = str(project["deadline"])
+
+            if project.get("created_at"):
+                project["created_at"] = str(project["created_at"])
+
+        close_db(connection, cursor)
+
+        return jsonify({
+            "success": True,
+
+            "company": {
+                "name": "Mayur Tech",
+                "location": "Dadiyapura, Jhansi"
+            },
+
+            "stats": {
+                "employees": employees,
+                "projects": projects,
+                "tasks": tasks,
+                "active_projects": active_projects
+            },
+
+            "recent_projects": recent_projects
+        })
+
+    except Exception as e:
+
+        close_db(connection, cursor)
+
+        return jsonify({
+            "success": False,
+            "message": "Unable to load dashboard",
+            "error": str(e)
+        }), 500
+
+# =========================================================
+# CREATE LOGIN ACCOUNT FOR EXISTING EMPLOYEE
+# =========================================================
+
+@app.route(
+    "/api/employees/<int:employee_id>/create-login",
+    methods=["POST"]
+)
+def create_employee_login(employee_id):
+
+    data = request.get_json(silent=True) or {}
+
+    email = data.get("email", "").strip()
+    password = data.get("password", "")
 
     if not email or not password:
         return jsonify({
@@ -232,10 +518,142 @@ def login():
     cursor = None
 
     try:
+
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+
+        # Employee
+        cursor.execute("""
+            SELECT *
+            FROM employees
+            WHERE id = %s
+        """, (employee_id,))
+
+        employee = cursor.fetchone()
+
+        if not employee:
+            return jsonify({
+                "success": False,
+                "message": "Employee not found"
+            }), 404
+
+        # Already linked?
+        if employee.get("user_id"):
+
+            return jsonify({
+                "success": False,
+                "message": "Employee already has a login"
+            }), 409
+
+        # Email check
+        cursor.execute("""
+            SELECT id
+            FROM users
+            WHERE email = %s
+            LIMIT 1
+        """, (email,))
+
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+
+            return jsonify({
+                "success": False,
+                "message": "Email already exists"
+            }), 409
+
+        # Create user
+        cursor.execute("""
+            INSERT INTO users
+                (name, email, password, role)
+            VALUES
+                (%s, %s, %s, 'employee')
+            RETURNING id
+        """, (
+            employee["name"],
+            email,
+            password
+        ))
+
+        user_id = cursor.fetchone()["id"]
+
+        # Automatically link employee
+        cursor.execute("""
+            UPDATE employees
+            SET user_id = %s
+            WHERE id = %s
+        """, (
+            user_id,
+            employee_id
+        ))
+
+        connection.commit()
+
+        return jsonify({
+            "success": True,
+            "message": "Employee login created successfully",
+            "user_id": user_id,
+            "employee_id": employee_id
+        })
+
+    except Exception as e:
+
+        connection.rollback()
+
+        print("CREATE LOGIN ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        connection.close()
+
+# =========================================================
+# LOGIN API - ADMIN + EMPLOYEE
+# =========================================================
+
+@app.route("/api/login", methods=["POST"])
+def login_api():
+
+    data = request.get_json(silent=True) or {}
+
+    email = data.get("email", "").strip()
+    password = data.get("password", "")
+
+    if not email or not password:
+
+        return jsonify({
+            "success": False,
+            "message": "Email and password are required"
+        }), 400
+
+    connection = get_connection()
+
+    if connection is None:
+
+        return jsonify({
+            "success": False,
+            "message": "Database connection failed"
+        }), 500
+
+    cursor = None
+
+    try:
+
         cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute("""
-            SELECT id, name, email, password, role
+            SELECT
+                id,
+                name,
+                email,
+                password,
+                role
             FROM users
             WHERE email = %s
             LIMIT 1
@@ -243,59 +661,105 @@ def login():
 
         user = cursor.fetchone()
 
-        if user is None or password != user["password"]:
+        if not user:
+
             return jsonify({
                 "success": False,
                 "message": "Invalid email or password"
             }), 401
 
-        response = {
-            "success": True,
-            "message": "Login successful",
-            "user": {
-                "id": user["id"],
-                "name": user["name"],
-                "email": user["email"],
-                "role": user["role"]
-            }
-        }
+        # Current SCMS project uses plain-text passwords.
+        # Keep this matching your existing database.
+        if user["password"] != password:
 
-        # Employee login
-        if user["role"] == "employee":
+            return jsonify({
+                "success": False,
+                "message": "Invalid email or password"
+            }), 401
+
+
+        # -------------------------------------------------
+        # ADMIN LOGIN
+        # -------------------------------------------------
+
+        if str(user["role"]).lower() == "admin":
+
+            return jsonify({
+                "success": True,
+                "message": "Admin login successful",
+
+                "user": {
+                    "id": user["id"],
+                    "name": user["name"],
+                    "email": user["email"],
+                    "role": "admin"
+                },
+
+                "redirect": "/dashboard"
+            })
+
+
+        # -------------------------------------------------
+        # EMPLOYEE LOGIN
+        # -------------------------------------------------
+
+        if str(user["role"]).lower() == "employee":
 
             cursor.execute("""
                 SELECT
-                    e.id,
-                    e.user_id,
-                    u.name,
-                    u.email,
-                    e.employee_code,
-                    e.department,
-                    e.designation,
-                    e.phone,
-                    e.joining_date,
-                    e.status
-                FROM employees e
-                LEFT JOIN users u
-                    ON e.user_id = u.id
-                WHERE e.user_id = %s
+                    id,
+                    name,
+                    user_id,
+                    employee_code,
+                    department,
+                    designation,
+                    phone,
+                    joining_date,
+                    status
+                FROM employees
+                WHERE user_id = %s
                 LIMIT 1
             """, (user["id"],))
 
             employee = cursor.fetchone()
 
-            if employee:
-                if employee.get("joining_date"):
-                    employee["joining_date"] = str(
-                        employee["joining_date"]
-                    )
+            if not employee:
 
-                response["employee"] = employee
-                response["redirect"] = "/employee-dashboard"
+                return jsonify({
+                    "success": False,
+                    "message": "Employee profile not found"
+                }), 404
 
-        return jsonify(response)
+
+            return jsonify({
+                "success": True,
+                "message": "Employee login successful",
+
+                "user": {
+                    "id": user["id"],
+                    "name": user["name"],
+                    "email": user["email"],
+                    "role": "employee",
+
+                    "employee": employee
+                },
+
+                "redirect": "/employee-dashboard"
+            })
+
+
+        # -------------------------------------------------
+        # UNKNOWN ROLE
+        # -------------------------------------------------
+
+        return jsonify({
+            "success": False,
+            "message": "Invalid user role"
+        }), 403
+
 
     except Exception as e:
+
         print("LOGIN ERROR:", e)
 
         return jsonify({
@@ -304,163 +768,57 @@ def login():
             "error": str(e)
         }), 500
 
-    finally:
-        close_db(connection, cursor)
-
-# =========================================================
-# DASHBOARD
-# =========================================================
-
-@app.route("/api/dashboard")
-def dashboard():
-    connection = get_connection()
-
-    if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
-
-    cursor = None
-
-    try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
-
-        cursor.execute("SELECT COUNT(*) AS total FROM employees")
-        employees = cursor.fetchone()["total"]
-
-        cursor.execute("SELECT COUNT(*) AS total FROM projects")
-        projects = cursor.fetchone()["total"]
-
-        cursor.execute("SELECT COUNT(*) AS total FROM tasks")
-        tasks = cursor.fetchone()["total"]
-
-        cursor.execute("""
-            SELECT COUNT(*) AS total
-            FROM projects
-            WHERE status = 'Active'
-        """)
-        active_projects = cursor.fetchone()["total"]
-
-        cursor.execute("""
-            SELECT id, project_name, description, client_name,
-                   start_date, deadline, status, created_at
-            FROM projects
-            ORDER BY id DESC
-            LIMIT 5
-        """)
-        recent_projects = cursor.fetchall()
-
-        for project in recent_projects:
-            for key in ("start_date", "deadline", "created_at"):
-                if project.get(key):
-                    project[key] = str(project[key])
-
-        return jsonify({
-            "success": True,
-            "company": {
-                "name": "Mayur Tech",
-                "location": "Dadiyapura, Jhansi"
-            },
-            "stats": {
-                "employees": employees,
-                "projects": projects,
-                "tasks": tasks,
-                "active_projects": active_projects
-            },
-            "recent_projects": recent_projects
-        })
-
-    except Exception as e:
-        print("DASHBOARD ERROR:", e)
-        return jsonify({
-            "success": False,
-            "message": "Unable to load dashboard",
-            "error": str(e)
-        }), 500
 
     finally:
-        close_db(connection, cursor)
 
+        if cursor:
+            cursor.close()
+
+        connection.close()
 
 # =========================================================
-# EMPLOYEES - GET
+# EMPLOYEE MANAGEMENT APIs
 # =========================================================
 
 @app.route("/api/employees", methods=["GET"])
 def get_employees():
     connection = get_connection()
-
     if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
+        return jsonify({"success": False, "message": "Database connection failed"}), 500
 
     cursor = None
-
     try:
-        # IMPORTANT:
-        # psycopg2 does not support cursor(dictionary=True).
-        # RealDictCursor is used instead.
         cursor = connection.cursor(cursor_factory=RealDictCursor)
-
         cursor.execute("""
-            SELECT
-                e.id,
-                e.user_id,
-                u.name AS name,
-                u.email AS email,
-                e.employee_code,
-                e.department,
-                e.designation,
-                e.phone,
-                e.joining_date,
-                e.status
+            SELECT e.id, e.name, e.user_id, e.employee_code,
+                   e.department, e.designation, e.phone,
+                   e.joining_date, e.status, u.email
             FROM employees e
-            LEFT JOIN users u
-                ON e.user_id = u.id
+            LEFT JOIN users u ON e.user_id = u.id
             ORDER BY e.id DESC
         """)
-
         employees = cursor.fetchall()
-
         for employee in employees:
             if employee.get("joining_date"):
                 employee["joining_date"] = str(employee["joining_date"])
-
-        return jsonify({
-            "success": True,
-            "employees": employees
-        })
-
-    except Exception as e:
-        print("EMPLOYEES GET ERROR:", e)
-        return jsonify({
-            "success": False,
-            "message": "Unable to fetch employees",
-            "error": str(e)
-        }), 500
-
-    finally:
         close_db(connection, cursor)
+        return jsonify({"success": True, "employees": employees})
+    except Exception as e:
+        close_db(connection, cursor)
+        return jsonify({"success": False, "message": "Unable to fetch employees", "error": str(e)}), 500
 
-
-# =========================================================
-# EMPLOYEES - ADD
-# =========================================================
 
 @app.route("/api/employees", methods=["POST"])
 def add_employee():
     data = request.get_json(silent=True) or {}
 
-    name = (data.get("name") or "").strip()
-    email = (data.get("email") or "").strip()
-    password = (data.get("password") or "").strip()
-    employee_code = (data.get("employee_code") or "").strip()
-    department = (data.get("department") or "").strip()
-    designation = (data.get("designation") or "").strip()
-    phone = (data.get("phone") or "").strip()
+    name = str(data.get("name", "")).strip()
+    email = str(data.get("email", "")).strip()
+    password = str(data.get("password", "")).strip()
+    employee_code = str(data.get("employee_code", "")).strip()
+    department = str(data.get("department", "")).strip()
+    designation = str(data.get("designation", "")).strip()
+    phone = str(data.get("phone", "")).strip()
     joining_date = data.get("joining_date") or None
     status = data.get("status", "Active")
 
@@ -472,77 +830,48 @@ def add_employee():
         return jsonify({"success": False, "message": "Employee password is required"}), 400
     if not employee_code:
         return jsonify({"success": False, "message": "Employee code is required"}), 400
-
-    if status not in ("Active", "Inactive"):
+    if status not in ["Active", "Inactive"]:
         status = "Active"
 
     connection = get_connection()
-
     if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
+        return jsonify({"success": False, "message": "Database connection failed"}), 500
 
     cursor = None
-
     try:
         cursor = connection.cursor(cursor_factory=RealDictCursor)
 
-        cursor.execute(
-            "SELECT id FROM users WHERE email = %s LIMIT 1",
-            (email,)
-        )
+        cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
         if cursor.fetchone():
-            return jsonify({
-                "success": False,
-                "message": "Email already exists"
-            }), 409
+            close_db(connection, cursor)
+            return jsonify({"success": False, "message": "Email already exists"}), 409
 
-        cursor.execute(
-            "SELECT id FROM employees WHERE employee_code = %s LIMIT 1",
-            (employee_code,)
-        )
+        cursor.execute("SELECT id FROM employees WHERE employee_code = %s", (employee_code,))
         if cursor.fetchone():
-            return jsonify({
-                "success": False,
-                "message": "Employee code already exists"
-            }), 409
+            close_db(connection, cursor)
+            return jsonify({"success": False, "message": "Employee code already exists"}), 409
 
         cursor.execute("""
             INSERT INTO users (name, email, password, role)
-            VALUES (%s, %s, %s, 'employee')
+            VALUES (%s, %s, %s, %s)
             RETURNING id
-        """, (name, email, password))
-
+        """, (name, email, password, "employee"))
         user_id = cursor.fetchone()["id"]
 
         cursor.execute("""
             INSERT INTO employees
-            (
-                user_id,
-                employee_code,
-                department,
-                designation,
-                phone,
-                joining_date,
-                status
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            (name, user_id, employee_code, department, designation,
+             phone, joining_date, status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
-            user_id,
-            employee_code,
-            department,
-            designation,
-            phone,
-            joining_date,
-            status
+            name, user_id, employee_code, department, designation,
+            phone, joining_date, status
         ))
-
         employee_id = cursor.fetchone()["id"]
 
         connection.commit()
+        close_db(connection, cursor)
 
         return jsonify({
             "success": True,
@@ -562,32 +891,28 @@ def add_employee():
         }), 201
 
     except Exception as e:
-        connection.rollback()
-        print("EMPLOYEE ADD ERROR:", e)
+        try:
+            connection.rollback()
+        except Exception:
+            pass
+        close_db(connection, cursor)
         return jsonify({
             "success": False,
             "message": "Unable to add employee",
             "error": str(e)
         }), 500
 
-    finally:
-        close_db(connection, cursor)
-
-
-# =========================================================
-# EMPLOYEES - UPDATE
-# =========================================================
 
 @app.route("/api/employees/<int:employee_id>", methods=["PUT"])
 def update_employee(employee_id):
     data = request.get_json(silent=True) or {}
 
-    name = (data.get("name") or "").strip()
-    email = (data.get("email") or "").strip()
-    employee_code = (data.get("employee_code") or "").strip()
-    department = (data.get("department") or "").strip()
-    designation = (data.get("designation") or "").strip()
-    phone = (data.get("phone") or "").strip()
+    name = str(data.get("name", "")).strip()
+    email = str(data.get("email", "")).strip()
+    employee_code = str(data.get("employee_code", "")).strip()
+    department = str(data.get("department", "")).strip()
+    designation = str(data.get("designation", "")).strip()
+    phone = str(data.get("phone", "")).strip()
     joining_date = data.get("joining_date") or None
     status = data.get("status", "Active")
 
@@ -598,90 +923,61 @@ def update_employee(employee_id):
         }), 400
 
     connection = get_connection()
-
     if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
+        return jsonify({"success": False, "message": "Database connection failed"}), 500
 
     cursor = None
-
     try:
         cursor = connection.cursor(cursor_factory=RealDictCursor)
 
-        cursor.execute("""
-            SELECT user_id
-            FROM employees
-            WHERE id = %s
-        """, (employee_id,))
-
+        cursor.execute(
+            "SELECT user_id FROM employees WHERE id = %s",
+            (employee_id,)
+        )
         employee = cursor.fetchone()
 
         if not employee:
-            return jsonify({
-                "success": False,
-                "message": "Employee not found"
-            }), 404
+            close_db(connection, cursor)
+            return jsonify({"success": False, "message": "Employee not found"}), 404
 
-        user_id = employee["user_id"]
+        user_id = employee.get("user_id")
 
         cursor.execute("""
-            SELECT id
-            FROM employees
-            WHERE employee_code = %s
-              AND id != %s
-            LIMIT 1
+            SELECT id FROM employees
+            WHERE employee_code = %s AND id != %s
         """, (employee_code, employee_id))
-
         if cursor.fetchone():
-            return jsonify({
-                "success": False,
-                "message": "Employee code already exists"
-            }), 409
+            close_db(connection, cursor)
+            return jsonify({"success": False, "message": "Employee code already exists"}), 409
 
         if user_id:
             cursor.execute("""
-                SELECT id
-                FROM users
-                WHERE email = %s
-                  AND id != %s
-                LIMIT 1
+                SELECT id FROM users
+                WHERE email = %s AND id != %s
             """, (email, user_id))
-
             if cursor.fetchone():
-                return jsonify({
-                    "success": False,
-                    "message": "Email already exists"
-                }), 409
-
-            cursor.execute("""
-                UPDATE users
-                SET name = %s, email = %s
-                WHERE id = %s
-            """, (name, email, user_id))
+                close_db(connection, cursor)
+                return jsonify({"success": False, "message": "Email already exists"}), 409
 
         cursor.execute("""
             UPDATE employees
-            SET
-                employee_code = %s,
-                department = %s,
-                designation = %s,
-                phone = %s,
-                joining_date = %s,
-                status = %s
-            WHERE id = %s
+            SET name=%s, employee_code=%s, department=%s,
+                designation=%s, phone=%s, joining_date=%s, status=%s
+            WHERE id=%s
         """, (
-            employee_code,
-            department,
-            designation,
-            phone,
-            joining_date,
-            status,
-            employee_id
+            name, employee_code, department, designation,
+            phone, joining_date, status, employee_id
         ))
 
+        if user_id:
+            cursor.execute("""
+                UPDATE users
+                SET name=%s, email=%s
+                WHERE id=%s
+            """, (name, email, user_id))
+
         connection.commit()
+        close_db(connection, cursor)
 
         return jsonify({
             "success": True,
@@ -689,52 +985,39 @@ def update_employee(employee_id):
         })
 
     except Exception as e:
-        connection.rollback()
-        print("EMPLOYEE UPDATE ERROR:", e)
+        try:
+            connection.rollback()
+        except Exception:
+            pass
+        close_db(connection, cursor)
         return jsonify({
             "success": False,
             "message": "Unable to update employee",
             "error": str(e)
         }), 500
 
-    finally:
-        close_db(connection, cursor)
-
-
-# =========================================================
-# EMPLOYEES - DELETE
-# =========================================================
 
 @app.route("/api/employees/<int:employee_id>", methods=["DELETE"])
 def delete_employee(employee_id):
     connection = get_connection()
-
     if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
+        return jsonify({"success": False, "message": "Database connection failed"}), 500
 
     cursor = None
-
     try:
         cursor = connection.cursor(cursor_factory=RealDictCursor)
 
-        cursor.execute("""
-            SELECT user_id
-            FROM employees
-            WHERE id = %s
-        """, (employee_id,))
-
+        cursor.execute(
+            "SELECT user_id FROM employees WHERE id = %s",
+            (employee_id,)
+        )
         employee = cursor.fetchone()
 
         if not employee:
-            return jsonify({
-                "success": False,
-                "message": "Employee not found"
-            }), 404
+            close_db(connection, cursor)
+            return jsonify({"success": False, "message": "Employee not found"}), 404
 
-        user_id = employee["user_id"]
+        user_id = employee.get("user_id")
 
         cursor.execute(
             "DELETE FROM employees WHERE id = %s",
@@ -742,13 +1025,13 @@ def delete_employee(employee_id):
         )
 
         if user_id:
-            cursor.execute("""
-                DELETE FROM users
-                WHERE id = %s
-                  AND role = 'employee'
-            """, (user_id,))
+            cursor.execute(
+                "DELETE FROM users WHERE id = %s AND role = 'employee'",
+                (user_id,)
+            )
 
         connection.commit()
+        close_db(connection, cursor)
 
         return jsonify({
             "success": True,
@@ -756,80 +1039,16 @@ def delete_employee(employee_id):
         })
 
     except Exception as e:
-        connection.rollback()
-        print("EMPLOYEE DELETE ERROR:", e)
+        try:
+            connection.rollback()
+        except Exception:
+            pass
+        close_db(connection, cursor)
         return jsonify({
             "success": False,
             "message": "Unable to delete employee",
             "error": str(e)
         }), 500
-
-    finally:
-        close_db(connection, cursor)
-
-
-# =========================================================
-# EMPLOYEE PROFILE BY USER
-# =========================================================
-
-@app.route("/api/employees/user/<int:user_id>")
-def employee_by_user(user_id):
-    connection = get_connection()
-
-    if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
-
-    cursor = None
-
-    try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
-
-        cursor.execute("""
-            SELECT
-                e.id,
-                e.user_id,
-                u.name,
-                u.email,
-                e.employee_code,
-                e.department,
-                e.designation,
-                e.phone,
-                e.joining_date,
-                e.status
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id
-            WHERE e.user_id = %s
-            LIMIT 1
-        """, (user_id,))
-
-        employee = cursor.fetchone()
-
-        if not employee:
-            return jsonify({
-                "success": False,
-                "message": "Employee profile not found"
-            }), 404
-
-        if employee.get("joining_date"):
-            employee["joining_date"] = str(employee["joining_date"])
-
-        return jsonify({
-            "success": True,
-            "employee": employee
-        })
-
-    except Exception as e:
-        print("EMPLOYEE PROFILE ERROR:", e)
-        return jsonify({
-            "success": False,
-            "message": str(e)
-        }), 500
-
-    finally:
-        close_db(connection, cursor)
 
 
 # =========================================================
@@ -838,6 +1057,7 @@ def employee_by_user(user_id):
 
 @app.route("/api/projects", methods=["GET"])
 def get_projects():
+
     connection = get_connection()
 
     if connection is None:
@@ -849,9 +1069,11 @@ def get_projects():
     cursor = None
 
     try:
+
         cursor = connection.cursor(cursor_factory=RealDictCursor)
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 id,
                 project_name,
@@ -863,14 +1085,29 @@ def get_projects():
                 created_at
             FROM projects
             ORDER BY id DESC
-        """)
+            """
+        )
 
         projects = cursor.fetchall()
 
         for project in projects:
-            for key in ("start_date", "deadline", "created_at"):
-                if project.get(key):
-                    project[key] = str(project[key])
+
+            if project.get("start_date"):
+                project["start_date"] = str(
+                    project["start_date"]
+                )
+
+            if project.get("deadline"):
+                project["deadline"] = str(
+                    project["deadline"]
+                )
+
+            if project.get("created_at"):
+                project["created_at"] = str(
+                    project["created_at"]
+                )
+
+        close_db(connection, cursor)
 
         return jsonify({
             "success": True,
@@ -878,15 +1115,14 @@ def get_projects():
         })
 
     except Exception as e:
-        print("PROJECTS GET ERROR:", e)
+
+        close_db(connection, cursor)
+
         return jsonify({
             "success": False,
             "message": "Unable to fetch projects",
             "error": str(e)
         }), 500
-
-    finally:
-        close_db(connection, cursor)
 
 
 # =========================================================
@@ -895,8 +1131,16 @@ def get_projects():
 
 @app.route("/api/projects", methods=["POST"])
 def add_project():
-    data = request.get_json(silent=True) or {}
-    project_name = (data.get("project_name") or "").strip()
+
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify({
+            "success": False,
+            "message": "Project data is required"
+        }), 400
+
+    project_name = data.get("project_name")
 
     if not project_name:
         return jsonify({
@@ -915,9 +1159,11 @@ def add_project():
     cursor = None
 
     try:
+
         cursor = connection.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             INSERT INTO projects
             (
                 project_name,
@@ -927,19 +1173,31 @@ def add_project():
                 deadline,
                 status
             )
-            VALUES (%s, %s, %s, %s, %s, %s)
+            VALUES
+            (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s
+            )
             RETURNING id
-        """, (
-            project_name,
-            data.get("description"),
-            data.get("client_name"),
-            data.get("start_date") or None,
-            data.get("deadline") or None,
-            data.get("status", "Pending")
-        ))
+            """,
+            (
+                project_name,
+                data.get("description"),
+                data.get("client_name"),
+                data.get("start_date") or None,
+                data.get("deadline") or None,
+                data.get("status", "Pending")
+            )
+        )
 
-        project_id = cursor.fetchone()[0]
+        project_id = cursor.fetchone()["id"]
         connection.commit()
+
+        close_db(connection, cursor)
 
         return jsonify({
             "success": True,
@@ -948,16 +1206,19 @@ def add_project():
         }), 201
 
     except Exception as e:
-        connection.rollback()
-        print("PROJECT ADD ERROR:", e)
+
+        try:
+            connection.rollback()
+        except Exception:
+            pass
+
+        close_db(connection, cursor)
+
         return jsonify({
             "success": False,
             "message": "Unable to add project",
             "error": str(e)
         }), 500
-
-    finally:
-        close_db(connection, cursor)
 
 
 # =========================================================
@@ -966,7 +1227,14 @@ def add_project():
 
 @app.route("/api/projects/<int:project_id>", methods=["PUT"])
 def update_project(project_id):
-    data = request.get_json(silent=True) or {}
+
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify({
+            "success": False,
+            "message": "Project data is required"
+        }), 400
 
     connection = get_connection()
 
@@ -979,9 +1247,11 @@ def update_project(project_id):
     cursor = None
 
     try:
+
         cursor = connection.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             UPDATE projects
             SET
                 project_name = %s,
@@ -991,17 +1261,22 @@ def update_project(project_id):
                 deadline = %s,
                 status = %s
             WHERE id = %s
-        """, (
-            data.get("project_name"),
-            data.get("description"),
-            data.get("client_name"),
-            data.get("start_date") or None,
-            data.get("deadline") or None,
-            data.get("status", "Pending"),
-            project_id
-        ))
+            """,
+            (
+                data.get("project_name"),
+                data.get("description"),
+                data.get("client_name"),
+                data.get("start_date") or None,
+                data.get("deadline") or None,
+                data.get("status", "Pending"),
+                project_id
+            )
+        )
 
         if cursor.rowcount == 0:
+
+            close_db(connection, cursor)
+
             return jsonify({
                 "success": False,
                 "message": "Project not found"
@@ -1009,22 +1284,27 @@ def update_project(project_id):
 
         connection.commit()
 
+        close_db(connection, cursor)
+
         return jsonify({
             "success": True,
             "message": "Project updated successfully"
         })
 
     except Exception as e:
-        connection.rollback()
-        print("PROJECT UPDATE ERROR:", e)
+
+        try:
+            connection.rollback()
+        except Exception:
+            pass
+
+        close_db(connection, cursor)
+
         return jsonify({
             "success": False,
             "message": "Unable to update project",
             "error": str(e)
         }), 500
-
-    finally:
-        close_db(connection, cursor)
 
 
 # =========================================================
@@ -1033,6 +1313,7 @@ def update_project(project_id):
 
 @app.route("/api/projects/<int:project_id>", methods=["DELETE"])
 def delete_project(project_id):
+
     connection = get_connection()
 
     if connection is None:
@@ -1044,28 +1325,42 @@ def delete_project(project_id):
     cursor = None
 
     try:
+
         cursor = connection.cursor()
 
-        cursor.execute("""
-            SELECT COUNT(*)
+        # Check tasks first
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS total
             FROM tasks
             WHERE project_id = %s
-        """, (project_id,))
+            """,
+            (project_id,)
+        )
 
         task_count = cursor.fetchone()[0]
 
         if task_count > 0:
+
+            close_db(connection, cursor)
+
             return jsonify({
                 "success": False,
                 "message": "This project has tasks. Delete or move the tasks first."
             }), 400
 
         cursor.execute(
-            "DELETE FROM projects WHERE id = %s",
+            """
+            DELETE FROM projects
+            WHERE id = %s
+            """,
             (project_id,)
         )
 
         if cursor.rowcount == 0:
+
+            close_db(connection, cursor)
+
             return jsonify({
                 "success": False,
                 "message": "Project not found"
@@ -1073,22 +1368,27 @@ def delete_project(project_id):
 
         connection.commit()
 
+        close_db(connection, cursor)
+
         return jsonify({
             "success": True,
             "message": "Project deleted successfully"
         })
 
     except Exception as e:
-        connection.rollback()
-        print("PROJECT DELETE ERROR:", e)
+
+        try:
+            connection.rollback()
+        except Exception:
+            pass
+
+        close_db(connection, cursor)
+
         return jsonify({
             "success": False,
             "message": "Unable to delete project",
             "error": str(e)
         }), 500
-
-    finally:
-        close_db(connection, cursor)
 
 
 # =========================================================
@@ -1097,6 +1397,7 @@ def delete_project(project_id):
 
 @app.route("/api/tasks", methods=["GET"])
 def get_tasks():
+
     connection = get_connection()
 
     if connection is None:
@@ -1108,9 +1409,11 @@ def get_tasks():
     cursor = None
 
     try:
+
         cursor = connection.cursor(cursor_factory=RealDictCursor)
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 t.id,
                 t.project_id,
@@ -1121,24 +1424,38 @@ def get_tasks():
                 t.status,
                 t.deadline,
                 t.created_at,
+
                 p.project_name,
-                u.name AS employee_name
+
+                e.name AS employee_name
+
             FROM tasks t
+
             LEFT JOIN projects p
                 ON t.project_id = p.id
+
             LEFT JOIN employees e
                 ON t.employee_id = e.id
-            LEFT JOIN users u
-                ON e.user_id = u.id
+
             ORDER BY t.id DESC
-        """)
+            """
+        )
 
         tasks = cursor.fetchall()
 
         for task in tasks:
-            for key in ("deadline", "created_at"):
-                if task.get(key):
-                    task[key] = str(task[key])
+
+            if task.get("deadline"):
+                task["deadline"] = str(
+                    task["deadline"]
+                )
+
+            if task.get("created_at"):
+                task["created_at"] = str(
+                    task["created_at"]
+                )
+
+        close_db(connection, cursor)
 
         return jsonify({
             "success": True,
@@ -1146,15 +1463,14 @@ def get_tasks():
         })
 
     except Exception as e:
-        print("TASKS GET ERROR:", e)
+
+        close_db(connection, cursor)
+
         return jsonify({
             "success": False,
             "message": "Unable to fetch tasks",
             "error": str(e)
         }), 500
-
-    finally:
-        close_db(connection, cursor)
 
 
 # =========================================================
@@ -1163,8 +1479,16 @@ def get_tasks():
 
 @app.route("/api/tasks", methods=["POST"])
 def add_task():
-    data = request.get_json(silent=True) or {}
-    title = (data.get("title") or "").strip()
+
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify({
+            "success": False,
+            "message": "Task data is required"
+        }), 400
+
+    title = data.get("title")
 
     if not title:
         return jsonify({
@@ -1183,9 +1507,11 @@ def add_task():
     cursor = None
 
     try:
+
         cursor = connection.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             INSERT INTO tasks
             (
                 project_id,
@@ -1196,20 +1522,33 @@ def add_task():
                 status,
                 deadline
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            VALUES
+            (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s
+            )
             RETURNING id
-        """, (
-            data.get("project_id") or None,
-            data.get("employee_id") or None,
-            title,
-            data.get("description"),
-            data.get("priority", "Medium"),
-            data.get("status", "Pending"),
-            data.get("deadline") or None
-        ))
+            """,
+            (
+                data.get("project_id") or None,
+                data.get("employee_id") or None,
+                title,
+                data.get("description"),
+                data.get("priority", "Medium"),
+                data.get("status", "Pending"),
+                data.get("deadline") or None
+            )
+        )
 
-        task_id = cursor.fetchone()[0]
+        task_id = cursor.fetchone()["id"]
         connection.commit()
+
+        close_db(connection, cursor)
 
         return jsonify({
             "success": True,
@@ -1218,16 +1557,19 @@ def add_task():
         }), 201
 
     except Exception as e:
-        connection.rollback()
-        print("TASK ADD ERROR:", e)
+
+        try:
+            connection.rollback()
+        except Exception:
+            pass
+
+        close_db(connection, cursor)
+
         return jsonify({
             "success": False,
             "message": "Unable to add task",
             "error": str(e)
         }), 500
-
-    finally:
-        close_db(connection, cursor)
 
 
 # =========================================================
@@ -1236,7 +1578,14 @@ def add_task():
 
 @app.route("/api/tasks/<int:task_id>", methods=["PUT"])
 def update_task(task_id):
-    data = request.get_json(silent=True) or {}
+
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify({
+            "success": False,
+            "message": "Task data is required"
+        }), 400
 
     connection = get_connection()
 
@@ -1249,9 +1598,11 @@ def update_task(task_id):
     cursor = None
 
     try:
+
         cursor = connection.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             UPDATE tasks
             SET
                 project_id = %s,
@@ -1262,18 +1613,23 @@ def update_task(task_id):
                 status = %s,
                 deadline = %s
             WHERE id = %s
-        """, (
-            data.get("project_id") or None,
-            data.get("employee_id") or None,
-            data.get("title"),
-            data.get("description"),
-            data.get("priority", "Medium"),
-            data.get("status", "Pending"),
-            data.get("deadline") or None,
-            task_id
-        ))
+            """,
+            (
+                data.get("project_id") or None,
+                data.get("employee_id") or None,
+                data.get("title"),
+                data.get("description"),
+                data.get("priority", "Medium"),
+                data.get("status", "Pending"),
+                data.get("deadline") or None,
+                task_id
+            )
+        )
 
         if cursor.rowcount == 0:
+
+            close_db(connection, cursor)
+
             return jsonify({
                 "success": False,
                 "message": "Task not found"
@@ -1281,22 +1637,27 @@ def update_task(task_id):
 
         connection.commit()
 
+        close_db(connection, cursor)
+
         return jsonify({
             "success": True,
             "message": "Task updated successfully"
         })
 
     except Exception as e:
-        connection.rollback()
-        print("TASK UPDATE ERROR:", e)
+
+        try:
+            connection.rollback()
+        except Exception:
+            pass
+
+        close_db(connection, cursor)
+
         return jsonify({
             "success": False,
             "message": "Unable to update task",
             "error": str(e)
         }), 500
-
-    finally:
-        close_db(connection, cursor)
 
 
 # =========================================================
@@ -1305,6 +1666,7 @@ def update_task(task_id):
 
 @app.route("/api/tasks/<int:task_id>", methods=["DELETE"])
 def delete_task(task_id):
+
     connection = get_connection()
 
     if connection is None:
@@ -1316,14 +1678,21 @@ def delete_task(task_id):
     cursor = None
 
     try:
+
         cursor = connection.cursor()
 
         cursor.execute(
-            "DELETE FROM tasks WHERE id = %s",
+            """
+            DELETE FROM tasks
+            WHERE id = %s
+            """,
             (task_id,)
         )
 
         if cursor.rowcount == 0:
+
+            close_db(connection, cursor)
+
             return jsonify({
                 "success": False,
                 "message": "Task not found"
@@ -1331,22 +1700,105 @@ def delete_task(task_id):
 
         connection.commit()
 
+        close_db(connection, cursor)
+
         return jsonify({
             "success": True,
             "message": "Task deleted successfully"
         })
 
     except Exception as e:
-        connection.rollback()
-        print("TASK DELETE ERROR:", e)
+
+        try:
+            connection.rollback()
+        except Exception:
+            pass
+
+        close_db(connection, cursor)
+
         return jsonify({
             "success": False,
             "message": "Unable to delete task",
             "error": str(e)
         }), 500
 
+# =========================================================
+# EMPLOYEE - MY TASKS
+# =========================================================
+
+@app.route("/api/employee/tasks/<int:user_id>", methods=["GET"])
+def employee_tasks(user_id):
+
+    connection = get_connection()
+
+    if connection is None:
+        return jsonify({
+            "success": False,
+            "message": "Database connection failed"
+        }), 500
+
+    cursor = None
+
+    try:
+
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+
+        cursor.execute("""
+            SELECT
+                t.id,
+                t.project_id,
+                t.employee_id,
+                t.title,
+                t.description,
+                t.priority,
+                t.status,
+                t.deadline,
+                t.created_at,
+                p.project_name
+            FROM tasks t
+            LEFT JOIN projects p
+                ON t.project_id = p.id
+            INNER JOIN employees e
+                ON t.employee_id = e.id
+            WHERE e.user_id = %s
+            ORDER BY t.id DESC
+        """, (user_id,))
+
+        tasks = cursor.fetchall()
+
+        for task in tasks:
+
+            if task.get("deadline"):
+                task["deadline"] = str(
+                    task["deadline"]
+                )
+
+            if task.get("created_at"):
+                task["created_at"] = str(
+                    task["created_at"]
+                )
+
+        return jsonify({
+            "success": True,
+            "tasks": tasks
+        })
+
+    except Exception as e:
+
+        print("EMPLOYEE TASK ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "message": "Unable to fetch employee tasks",
+            "error": str(e)
+        }), 500
+
     finally:
-        close_db(connection, cursor)
+
+        if cursor:
+            cursor.close()
+
+        connection.close()
 
 
 # =========================================================
@@ -1355,10 +1807,17 @@ def delete_task(task_id):
 
 @app.route("/api/users/<int:user_id>", methods=["PUT"])
 def update_user_profile(user_id):
-    data = request.get_json(silent=True) or {}
 
-    name = (data.get("name") or "").strip()
-    email = (data.get("email") or "").strip()
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify({
+            "success": False,
+            "message": "Profile data is required"
+        }), 400
+
+    name = data.get("name")
+    email = data.get("email")
 
     if not name or not email:
         return jsonify({
@@ -1377,22 +1836,31 @@ def update_user_profile(user_id):
     cursor = None
 
     try:
+
         cursor = connection.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             UPDATE users
             SET name = %s,
                 email = %s
             WHERE id = %s
-        """, (name, email, user_id))
+            """,
+            (name, email, user_id)
+        )
 
         if cursor.rowcount == 0:
+
+            close_db(connection, cursor)
+
             return jsonify({
                 "success": False,
                 "message": "User not found"
             }), 404
 
         connection.commit()
+
+        close_db(connection, cursor)
 
         return jsonify({
             "success": True,
@@ -1405,16 +1873,19 @@ def update_user_profile(user_id):
         })
 
     except Exception as e:
-        connection.rollback()
-        print("PROFILE UPDATE ERROR:", e)
+
+        try:
+            connection.rollback()
+        except Exception:
+            pass
+
+        close_db(connection, cursor)
+
         return jsonify({
             "success": False,
             "message": "Unable to update profile",
             "error": str(e)
         }), 500
-
-    finally:
-        close_db(connection, cursor)
 
 
 # =========================================================
@@ -1423,12 +1894,20 @@ def update_user_profile(user_id):
 
 @app.route("/api/users/<int:user_id>/password", methods=["PUT"])
 def update_user_password(user_id):
-    data = request.get_json(silent=True) or {}
+
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify({
+            "success": False,
+            "message": "Password data is required"
+        }), 400
 
     current_password = data.get("current_password")
     new_password = data.get("new_password")
 
     if not current_password or not new_password:
+
         return jsonify({
             "success": False,
             "message": "Current and new password are required"
@@ -1445,35 +1924,50 @@ def update_user_password(user_id):
     cursor = None
 
     try:
+
         cursor = connection.cursor(cursor_factory=RealDictCursor)
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT password
             FROM users
             WHERE id = %s
-        """, (user_id,))
+            """,
+            (user_id,)
+        )
 
         user = cursor.fetchone()
 
         if user is None:
+
+            close_db(connection, cursor)
+
             return jsonify({
                 "success": False,
                 "message": "User not found"
             }), 404
 
         if current_password != user["password"]:
+
+            close_db(connection, cursor)
+
             return jsonify({
                 "success": False,
                 "message": "Current password is incorrect"
             }), 401
 
-        cursor.execute("""
+        cursor.execute(
+            """
             UPDATE users
             SET password = %s
             WHERE id = %s
-        """, (new_password, user_id))
+            """,
+            (new_password, user_id)
+        )
 
         connection.commit()
+
+        close_db(connection, cursor)
 
         return jsonify({
             "success": True,
@@ -1481,376 +1975,30 @@ def update_user_password(user_id):
         })
 
     except Exception as e:
-        connection.rollback()
-        print("PASSWORD UPDATE ERROR:", e)
+
+        try:
+            connection.rollback()
+        except Exception:
+            pass
+
+        close_db(connection, cursor)
+
         return jsonify({
             "success": False,
             "message": "Unable to change password",
             "error": str(e)
         }), 500
 
-    finally:
-        close_db(connection, cursor)
-
-
-
 # =========================================================
-# EMPLOYEE - MY PROJECTS
+# ATTENDANCE APIs
 # =========================================================
 
-@app.route("/api/employee/projects/<int:user_id>", methods=["GET"])
-def employee_projects(user_id):
-    connection = get_connection()
-
-    if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
-
-    cursor = None
-
-    try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
-
-        cursor.execute("""
-            SELECT
-                p.id,
-                p.project_name,
-                p.description,
-                p.client_name,
-                p.start_date,
-                p.deadline,
-                p.status,
-                p.created_at
-            FROM projects p
-            INNER JOIN tasks t ON t.project_id = p.id
-            INNER JOIN employees e ON t.employee_id = e.id
-            WHERE e.user_id = %s
-            GROUP BY
-                p.id,
-                p.project_name,
-                p.description,
-                p.client_name,
-                p.start_date,
-                p.deadline,
-                p.status,
-                p.created_at
-            ORDER BY p.id DESC
-        """, (user_id,))
-
-        projects = cursor.fetchall()
-
-        for project in projects:
-            for key in ("start_date", "deadline", "created_at"):
-                if project.get(key):
-                    project[key] = str(project[key])
-
-        return jsonify({
-            "success": True,
-            "projects": projects
-        })
-
-    except Exception as e:
-        print("EMPLOYEE PROJECT ERROR:", e)
-        return jsonify({
-            "success": False,
-            "message": "Unable to fetch employee projects",
-            "error": str(e)
-        }), 500
-
-    finally:
-        close_db(connection, cursor)
-
-
-# =========================================================
-# EMPLOYEE - MY TASKS
-# =========================================================
-
-@app.route("/api/employee/tasks/<int:user_id>", methods=["GET"])
-def employee_tasks(user_id):
-    connection = get_connection()
-
-    if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
-
-    cursor = None
-
-    try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
-
-        cursor.execute("""
-            SELECT
-                t.id,
-                t.project_id,
-                t.employee_id,
-                t.title,
-                t.description,
-                t.priority,
-                t.status,
-                t.deadline,
-                t.created_at,
-                p.project_name
-            FROM tasks t
-            LEFT JOIN projects p ON t.project_id = p.id
-            INNER JOIN employees e ON t.employee_id = e.id
-            WHERE e.user_id = %s
-            ORDER BY t.id DESC
-        """, (user_id,))
-
-        tasks = cursor.fetchall()
-
-        for task in tasks:
-            for key in ("deadline", "created_at"):
-                if task.get(key):
-                    task[key] = str(task[key])
-
-        return jsonify({
-            "success": True,
-            "tasks": tasks
-        })
-
-    except Exception as e:
-        print("EMPLOYEE TASK ERROR:", e)
-        return jsonify({
-            "success": False,
-            "message": "Unable to fetch employee tasks",
-            "error": str(e)
-        }), 500
-
-    finally:
-        close_db(connection, cursor)
-
-
-# =========================================================
-# EMPLOYEE TASK STATUS UPDATE
-# =========================================================
-
-@app.route("/api/tasks/<int:task_id>/status", methods=["PUT"])
-def update_task_status(task_id):
-    data = request.get_json(silent=True) or {}
-    status = (data.get("status") or "").strip()
-
-    allowed_statuses = ["Pending", "In Progress", "Completed"]
-
-    if status not in allowed_statuses:
-        return jsonify({
-            "success": False,
-            "message": "Invalid status"
-        }), 400
-
-    connection = get_connection()
-
-    if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
-
-    cursor = None
-
-    try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
-
-        cursor.execute("""
-            SELECT id, title, employee_id
-            FROM tasks
-            WHERE id = %s
-        """, (task_id,))
-
-        task = cursor.fetchone()
-
-        if not task:
-            return jsonify({
-                "success": False,
-                "message": "Task not found"
-            }), 404
-
-        cursor.execute("""
-            UPDATE tasks
-            SET status = %s
-            WHERE id = %s
-        """, (status, task_id))
-
-        connection.commit()
-
-        return jsonify({
-            "success": True,
-            "message": "Task status updated successfully",
-            "task_id": task_id,
-            "status": status
-        })
-
-    except Exception as e:
-        connection.rollback()
-        print("TASK STATUS ERROR:", e)
-        return jsonify({
-            "success": False,
-            "message": "Unable to update task status",
-            "error": str(e)
-        }), 500
-
-    finally:
-        close_db(connection, cursor)
-
-
-# =========================================================
-# ASSIGN PROJECT TO EMPLOYEE
-# =========================================================
-
-@app.route("/api/projects/<int:project_id>/assign", methods=["POST"])
-def assign_project_to_employee(project_id):
-    connection = get_connection()
-
-    if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
-
-    cursor = None
-
-    try:
-        data = request.get_json(silent=True) or {}
-        employee_id = data.get("employee_id")
-
-        if not employee_id:
-            return jsonify({
-                "success": False,
-                "message": "Employee ID is required"
-            }), 400
-
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
-
-        cursor.execute("""
-            SELECT id, project_name
-            FROM projects
-            WHERE id = %s
-        """, (project_id,))
-        project = cursor.fetchone()
-
-        if not project:
-            return jsonify({
-                "success": False,
-                "message": "Project not found"
-            }), 404
-
-        cursor.execute("""
-            SELECT e.id, e.user_id, u.name
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id
-            WHERE e.id = %s
-        """, (employee_id,))
-        employee = cursor.fetchone()
-
-        if not employee:
-            return jsonify({
-                "success": False,
-                "message": "Employee not found"
-            }), 404
-
-        cursor.execute("""
-            SELECT id
-            FROM tasks
-            WHERE project_id = %s
-              AND employee_id = %s
-            LIMIT 1
-        """, (project_id, employee_id))
-
-        if cursor.fetchone():
-            return jsonify({
-                "success": True,
-                "message": "Project is already assigned to this employee"
-            })
-
-        cursor.execute("""
-            INSERT INTO tasks
-            (
-                project_id,
-                employee_id,
-                title,
-                description,
-                priority,
-                status
-            )
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (
-            project_id,
-            employee_id,
-            project["project_name"],
-            "Project assigned by Admin",
-            "Medium",
-            "Pending"
-        ))
-
-        # Create notification when the notification table exists.
-        if employee.get("user_id"):
-            try:
-                cursor.execute("""
-                    INSERT INTO notifications
-                    (user_id, title, message, type)
-                    VALUES (%s, %s, %s, %s)
-                """, (
-                    employee["user_id"],
-                    "New Project Assigned",
-                    f'You have been assigned project: {project["project_name"]}',
-                    "project"
-                ))
-            except Exception as notification_error:
-                print("PROJECT NOTIFICATION ERROR:", notification_error)
-                connection.rollback()
-                # Re-open the cursor after a failed optional notification.
-                cursor.close()
-                cursor = connection.cursor(cursor_factory=RealDictCursor)
-                cursor.execute("""
-                    SELECT 1
-                """)
-                # The transaction was rolled back, so recreate the assignment.
-                cursor.execute("""
-                    INSERT INTO tasks
-                    (project_id, employee_id, title, description, priority, status)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                """, (
-                    project_id,
-                    employee_id,
-                    project["project_name"],
-                    "Project assigned by Admin",
-                    "Medium",
-                    "Pending"
-                ))
-
-        connection.commit()
-
-        return jsonify({
-            "success": True,
-            "message": f'Project "{project["project_name"]}" assigned to {employee.get("name") or "employee"} successfully',
-            "project_id": project_id,
-            "employee_id": employee_id,
-            "employee_name": employee.get("name")
-        }), 201
-
-    except Exception as e:
-        connection.rollback()
-        print("ASSIGN PROJECT ERROR:", e)
-        return jsonify({
-            "success": False,
-            "message": "Unable to assign project",
-            "error": str(e)
-        }), 500
-
-    finally:
-        close_db(connection, cursor)
-
-
-# =========================================================
-# EMPLOYEE ATTENDANCE - TODAY
-# =========================================================
-
-@app.route("/api/attendance/<int:user_id>/today", methods=["GET"])
+@app.route(
+    "/api/attendance/<int:user_id>/today",
+    methods=["GET"]
+)
 def get_today_attendance(user_id):
+
     connection = get_connection()
 
     if connection is None:
@@ -1862,25 +2010,54 @@ def get_today_attendance(user_id):
     cursor = None
 
     try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
+
+        cursor = connection.cursor(
+            cursor_factory=RealDictCursor
+        )
 
         cursor.execute("""
             SELECT
-                id, user_id, attendance_date, check_in, check_out,
-                status, working_hours, created_at
+                id,
+                user_id,
+                attendance_date,
+                check_in,
+                check_out,
+                status,
+                working_hours,
+                created_at
             FROM attendance
             WHERE user_id = %s
-              AND attendance_date = (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata')::date
+            AND attendance_date = CURRENT_DATE
             LIMIT 1
         """, (user_id,))
 
         attendance = cursor.fetchone()
 
         if attendance:
-            for key in ("attendance_date", "check_in", "check_out", "created_at"):
-                if attendance.get(key):
-                    attendance[key] = str(attendance[key])
-            attendance["working_hours"] = float(attendance.get("working_hours") or 0)
+
+            if attendance.get("attendance_date"):
+                attendance["attendance_date"] = str(
+                    attendance["attendance_date"]
+                )
+
+            if attendance.get("check_in"):
+                attendance["check_in"] = str(
+                    attendance["check_in"]
+                )
+
+            if attendance.get("check_out"):
+                attendance["check_out"] = str(
+                    attendance["check_out"]
+                )
+
+            if attendance.get("created_at"):
+                attendance["created_at"] = str(
+                    attendance["created_at"]
+                )
+
+            attendance["working_hours"] = float(
+                attendance.get("working_hours") or 0
+            )
 
         return jsonify({
             "success": True,
@@ -1888,7 +2065,7 @@ def get_today_attendance(user_id):
         })
 
     except Exception as e:
-        print("ATTENDANCE TODAY ERROR:", e)
+
         return jsonify({
             "success": False,
             "message": "Unable to load attendance",
@@ -1896,15 +2073,23 @@ def get_today_attendance(user_id):
         }), 500
 
     finally:
-        close_db(connection, cursor)
+
+        if cursor:
+            cursor.close()
+
+        connection.close()
 
 
 # =========================================================
-# EMPLOYEE ATTENDANCE - CHECK IN
+# CHECK IN
 # =========================================================
 
-@app.route("/api/attendance/<int:user_id>/check-in", methods=["POST"])
+@app.route(
+    "/api/attendance/<int:user_id>/check-in",
+    methods=["POST"]
+)
 def attendance_check_in(user_id):
+
     connection = get_connection()
 
     if connection is None:
@@ -1916,55 +2101,111 @@ def attendance_check_in(user_id):
     cursor = None
 
     try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
+
+        cursor = connection.cursor(
+            cursor_factory=RealDictCursor
+        )
 
         cursor.execute("""
-            SELECT id, check_in, check_out, status
+            SELECT
+                id,
+                check_in,
+                check_out,
+                status
             FROM attendance
             WHERE user_id = %s
-              AND attendance_date = (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata')::date
+            AND attendance_date = CURRENT_DATE
             LIMIT 1
         """, (user_id,))
+
         existing = cursor.fetchone()
 
+        # Already checked in
         if existing and existing.get("check_in"):
+
             return jsonify({
                 "success": False,
                 "message": "You have already checked in today",
                 "attendance": existing
             }), 400
 
+        # Existing record without check-in
         if existing:
+
             cursor.execute("""
                 UPDATE attendance
-                SET check_in = CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata', status = 'Present'
+                SET
+                    check_in = NOW(),
+                    status = 'Present'
                 WHERE id = %s
             """, (existing["id"],))
+
         else:
+
             cursor.execute("""
                 INSERT INTO attendance
-                (user_id, attendance_date, check_in, status, working_hours)
-                VALUES (%s, (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata')::date, CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata', 'Present', 0)
+                (
+                    user_id,
+                    attendance_date,
+                    check_in,
+                    status,
+                    working_hours
+                )
+                VALUES
+                (
+                    %s,
+                    CURRENT_DATE,
+                    NOW(),
+                    'Present',
+                    0
+                )
             """, (user_id,))
 
         connection.commit()
 
         cursor.execute("""
             SELECT
-                id, user_id, attendance_date, check_in, check_out,
-                status, working_hours, created_at
+                id,
+                user_id,
+                attendance_date,
+                check_in,
+                check_out,
+                status,
+                working_hours,
+                created_at
             FROM attendance
             WHERE user_id = %s
-              AND attendance_date = (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata')::date
+            AND attendance_date = CURRENT_DATE
             LIMIT 1
         """, (user_id,))
+
         attendance = cursor.fetchone()
 
         if attendance:
-            for key in ("attendance_date", "check_in", "check_out", "created_at"):
-                if attendance.get(key):
-                    attendance[key] = str(attendance[key])
-            attendance["working_hours"] = float(attendance.get("working_hours") or 0)
+
+            if attendance.get("attendance_date"):
+                attendance["attendance_date"] = str(
+                    attendance["attendance_date"]
+                )
+
+            if attendance.get("check_in"):
+                attendance["check_in"] = str(
+                    attendance["check_in"]
+                )
+
+            if attendance.get("check_out"):
+                attendance["check_out"] = str(
+                    attendance["check_out"]
+                )
+
+            if attendance.get("created_at"):
+                attendance["created_at"] = str(
+                    attendance["created_at"]
+                )
+
+            attendance["working_hours"] = float(
+                attendance.get("working_hours") or 0
+            )
 
         return jsonify({
             "success": True,
@@ -1973,8 +2214,9 @@ def attendance_check_in(user_id):
         })
 
     except Exception as e:
+
         connection.rollback()
-        print("CHECK-IN ERROR:", e)
+
         return jsonify({
             "success": False,
             "message": "Check-in failed",
@@ -1982,15 +2224,23 @@ def attendance_check_in(user_id):
         }), 500
 
     finally:
-        close_db(connection, cursor)
+
+        if cursor:
+            cursor.close()
+
+        connection.close()
 
 
 # =========================================================
-# EMPLOYEE ATTENDANCE - CHECK OUT
+# CHECK OUT
 # =========================================================
 
-@app.route("/api/attendance/<int:user_id>/check-out", methods=["POST"])
+@app.route(
+    "/api/attendance/<int:user_id>/check-out",
+    methods=["POST"]
+)
 def attendance_check_out(user_id):
+
     connection = get_connection()
 
     if connection is None:
@@ -2002,18 +2252,32 @@ def attendance_check_out(user_id):
     cursor = None
 
     try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
+
+        cursor = connection.cursor(
+            cursor_factory=RealDictCursor
+        )
 
         cursor.execute("""
-            SELECT id, check_in, check_out, status
+            SELECT
+                id,
+                check_in,
+                check_out,
+                status
             FROM attendance
             WHERE user_id = %s
-              AND attendance_date = (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata')::date
+            AND attendance_date = CURRENT_DATE
             LIMIT 1
         """, (user_id,))
+
         attendance = cursor.fetchone()
 
-        if not attendance or not attendance.get("check_in"):
+        if not attendance:
+            return jsonify({
+                "success": False,
+                "message": "Please check in first"
+            }), 400
+
+        if not attendance.get("check_in"):
             return jsonify({
                 "success": False,
                 "message": "Please check in first"
@@ -2028,11 +2292,12 @@ def attendance_check_out(user_id):
         cursor.execute("""
             UPDATE attendance
             SET
-                check_out = CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata',
-                working_hours = ROUND(
-                    (EXTRACT(EPOCH FROM ((CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata') - check_in)) / 3600.0)::numeric,
-                    2
-                )
+                check_out = NOW(),
+                working_hours =
+                    ROUND(
+                        (EXTRACT(EPOCH FROM (NOW() - check_in)) / 3600.0)::numeric,
+                        2
+                    )
             WHERE id = %s
         """, (attendance["id"],))
 
@@ -2040,19 +2305,46 @@ def attendance_check_out(user_id):
 
         cursor.execute("""
             SELECT
-                id, user_id, attendance_date, check_in, check_out,
-                status, working_hours, created_at
+                id,
+                user_id,
+                attendance_date,
+                check_in,
+                check_out,
+                status,
+                working_hours,
+                created_at
             FROM attendance
             WHERE id = %s
             LIMIT 1
         """, (attendance["id"],))
+
         updated = cursor.fetchone()
 
         if updated:
-            for key in ("attendance_date", "check_in", "check_out", "created_at"):
-                if updated.get(key):
-                    updated[key] = str(updated[key])
-            updated["working_hours"] = float(updated.get("working_hours") or 0)
+
+            if updated.get("attendance_date"):
+                updated["attendance_date"] = str(
+                    updated["attendance_date"]
+                )
+
+            if updated.get("check_in"):
+                updated["check_in"] = str(
+                    updated["check_in"]
+                )
+
+            if updated.get("check_out"):
+                updated["check_out"] = str(
+                    updated["check_out"]
+                )
+
+            if updated.get("created_at"):
+                updated["created_at"] = str(
+                    updated["created_at"]
+                )
+
+            updated["working_hours"] = float(
+                updated.get("working_hours") or 0
+            )
 
         return jsonify({
             "success": True,
@@ -2061,8 +2353,9 @@ def attendance_check_out(user_id):
         })
 
     except Exception as e:
+
         connection.rollback()
-        print("CHECK-OUT ERROR:", e)
+
         return jsonify({
             "success": False,
             "message": "Check-out failed",
@@ -2070,15 +2363,40 @@ def attendance_check_out(user_id):
         }), 500
 
     finally:
-        close_db(connection, cursor)
 
+        if cursor:
+            cursor.close()
+
+        connection.close()
+# =========================================================
+# EMPLOYEE ATTENDANCE PAGE
+# =========================================================
+
+@app.route("/employee-attendance")
+def employee_attendance_page():
+    file_path = os.path.join(
+        FRONTEND_DIR,
+        "employee-attendance.html"
+    )
+
+    if os.path.exists(file_path):
+        return send_from_directory(
+            FRONTEND_DIR,
+            "employee-attendance.html"
+        )
+
+    return "employee-attendance.html not found", 404
 
 # =========================================================
-# EMPLOYEE ATTENDANCE - HISTORY
+# EMPLOYEE ATTENDANCE HISTORY
 # =========================================================
 
-@app.route("/api/attendance/<int:user_id>/history", methods=["GET"])
+@app.route(
+    "/api/attendance/<int:user_id>/history",
+    methods=["GET"]
+)
 def get_attendance_history(user_id):
+
     connection = get_connection()
 
     if connection is None:
@@ -2090,12 +2408,19 @@ def get_attendance_history(user_id):
     cursor = None
 
     try:
+
         cursor = connection.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute("""
             SELECT
-                id, user_id, attendance_date, check_in, check_out,
-                status, working_hours, created_at
+                id,
+                user_id,
+                attendance_date,
+                check_in,
+                check_out,
+                status,
+                working_hours,
+                created_at
             FROM attendance
             WHERE user_id = %s
             ORDER BY attendance_date DESC
@@ -2105,10 +2430,30 @@ def get_attendance_history(user_id):
         history = cursor.fetchall()
 
         for row in history:
-            for key in ("attendance_date", "check_in", "check_out", "created_at"):
-                if row.get(key):
-                    row[key] = str(row[key])
-            row["working_hours"] = float(row.get("working_hours") or 0)
+
+            if row.get("attendance_date"):
+                row["attendance_date"] = str(
+                    row["attendance_date"]
+                )
+
+            if row.get("check_in"):
+                row["check_in"] = str(
+                    row["check_in"]
+                )
+
+            if row.get("check_out"):
+                row["check_out"] = str(
+                    row["check_out"]
+                )
+
+            if row.get("created_at"):
+                row["created_at"] = str(
+                    row["created_at"]
+                )
+
+            row["working_hours"] = float(
+                row.get("working_hours") or 0
+            )
 
         return jsonify({
             "success": True,
@@ -2116,7 +2461,9 @@ def get_attendance_history(user_id):
         })
 
     except Exception as e:
+
         print("ATTENDANCE HISTORY ERROR:", e)
+
         return jsonify({
             "success": False,
             "message": "Unable to load attendance history",
@@ -2124,154 +2471,104 @@ def get_attendance_history(user_id):
         }), 500
 
     finally:
-        close_db(connection, cursor)
 
+        if cursor:
+            cursor.close()
+
+        connection.close()
 
 # =========================================================
-# NOTIFICATIONS - GET
+# FORGOT PASSWORD API
 # =========================================================
 
-@app.route("/api/notifications/<int:user_id>", methods=["GET"])
-def get_notifications(user_id):
-    connection = get_connection()
+@app.route("/api/forgot-password", methods=["POST"])
+def forgot_password():
 
-    if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
-
+    connection = None
     cursor = None
 
     try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
+        data = request.get_json(silent=True) or {}
 
-        cursor.execute("""
-            SELECT
-                id, user_id, title, message, type, is_read, created_at
-            FROM notifications
-            WHERE user_id = %s
-            ORDER BY id DESC
-        """, (user_id,))
+        email = (data.get("email") or "").strip().lower()
+        new_password = data.get("new_password") or ""
 
-        notifications = cursor.fetchall()
-
-        for notification in notifications:
-            if notification.get("created_at"):
-                notification["created_at"] = str(notification["created_at"])
-            notification["is_read"] = bool(notification.get("is_read"))
-
-        return jsonify({
-            "success": True,
-            "notifications": notifications
-        })
-
-    except Exception as e:
-        print("NOTIFICATIONS GET ERROR:", e)
-        return jsonify({
-            "success": False,
-            "message": "Unable to load notifications",
-            "error": str(e)
-        }), 500
-
-    finally:
-        close_db(connection, cursor)
-
-
-# =========================================================
-# NOTIFICATIONS - UNREAD COUNT
-# =========================================================
-
-@app.route("/api/notifications/<int:user_id>/unread-count", methods=["GET"])
-def get_unread_notification_count(user_id):
-    connection = get_connection()
-
-    if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
-
-    cursor = None
-
-    try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
-        cursor.execute("""
-            SELECT COUNT(*) AS count
-            FROM notifications
-            WHERE user_id = %s
-              AND is_read = FALSE
-        """, (user_id,))
-
-        result = cursor.fetchone()
-
-        return jsonify({
-            "success": True,
-            "count": result["count"] if result else 0
-        })
-
-    except Exception as e:
-        print("NOTIFICATION COUNT ERROR:", e)
-        return jsonify({
-            "success": False,
-            "message": "Unable to get notification count",
-            "error": str(e)
-        }), 500
-
-    finally:
-        close_db(connection, cursor)
-
-
-# =========================================================
-# NOTIFICATIONS - MARK AS READ
-# =========================================================
-
-@app.route("/api/notifications/<int:notification_id>/read", methods=["PUT"])
-def mark_notification_read(notification_id):
-    connection = get_connection()
-
-    if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
-
-    cursor = None
-
-    try:
-        cursor = connection.cursor()
-
-        cursor.execute("""
-            UPDATE notifications
-            SET is_read = TRUE
-            WHERE id = %s
-        """, (notification_id,))
-
-        if cursor.rowcount == 0:
-            connection.rollback()
+        if not email or not new_password:
             return jsonify({
                 "success": False,
-                "message": "Notification not found"
+                "message": "Email and new password are required."
+            }), 400
+
+        if len(new_password) < 6:
+            return jsonify({
+                "success": False,
+                "message": "Password must be at least 6 characters."
+            }), 400
+
+        connection = get_connection()
+
+        if connection is None:
+            return jsonify({
+                "success": False,
+                "message": "Database connection failed."
+            }), 500
+
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT id
+            FROM public.users
+            WHERE LOWER(email) = %s
+            LIMIT 1
+            """,
+            (email,)
+        )
+
+        user = cursor.fetchone()
+
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "No account found with this email."
             }), 404
+
+        cursor.execute(
+            """
+            UPDATE public.users
+            SET password = %s
+            WHERE id = %s
+            """,
+            (new_password, user[0])
+        )
 
         connection.commit()
 
         return jsonify({
             "success": True,
-            "message": "Notification marked as read"
+            "message": "Password reset successfully. Redirecting to login..."
         })
 
     except Exception as e:
-        connection.rollback()
-        print("NOTIFICATION READ ERROR:", e)
+
+        if connection:
+            connection.rollback()
+
+        print("FORGOT PASSWORD ERROR:", e)
+
         return jsonify({
             "success": False,
-            "message": "Unable to update notification",
+            "message": "Unable to reset password",
             "error": str(e)
         }), 500
 
     finally:
-        close_db(connection, cursor)
+
+        if cursor:
+            cursor.close()
+
+        if connection:
+            connection.close()
 
 
 # =========================================================
@@ -2279,20 +2576,21 @@ def mark_notification_read(notification_id):
 # =========================================================
 
 if __name__ == "__main__":
+    print()
     print("=" * 60)
     print("          MAYUR TECH - SCMS")
     print(" Software Company Management System")
     print("=" * 60)
+    print("Company   : Mayur Tech")
+    print("Location  : Dadiyapura, Jhansi")
     print("Server    : http://127.0.0.1:5000")
     print("Login     : http://127.0.0.1:5000/login")
     print("Dashboard : http://127.0.0.1:5000/dashboard")
     print("Employees : http://127.0.0.1:5000/employees")
     print("Projects  : http://127.0.0.1:5000/projects")
     print("Tasks     : http://127.0.0.1:5000/tasks")
+    print("About     : http://127.0.0.1:5000/about")
+    print("Settings  : http://127.0.0.1:5000/settings")
     print("=" * 60)
-
-    app.run(
-        host="0.0.0.0",
-        port=int(os.environ.get("PORT", 5000)),
-        debug=True
-    )
+    print()
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=False)
