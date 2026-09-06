@@ -38,6 +38,16 @@ def close_db(connection, cursor=None):
 def home():
     return send_from_directory(FRONTEND_DIR, "login.html")
 
+# =========================================================
+# FORGOT PASSWORD PAGE
+# =========================================================
+
+@app.route("/forgot-password")
+def forgot_password_page():
+    return send_from_directory(
+        FRONTEND_DIR,
+        "forgot-password.html"
+    )
 
 @app.route("/login")
 def login_page():
