@@ -1633,98 +1633,80 @@ async function loadEmployees(){
 async function assignProject(){
 
     if(!assignProjectId){
-
-        showToast(
-            "Project not selected"
-        );
-
+        showToast("Project not selected");
         return;
-
     }
-
 
     const employeeId =
-        document.getElementById(
-            "assignEmployee"
-        ).value;
-
+        document.getElementById("assignEmployee").value;
 
     if(!employeeId){
-
-        showToast(
-            "Please select Rahul or another employee"
-        );
-
+        showToast("Please select an employee");
         return;
-
     }
-
 
     try{
 
-        const response =
-            await fetch(
-                `/api/projects/${assignProjectId}/assign`,
-                {
-                    method:"POST",
+        const response = await fetch(
+            `/api/projects/${assignProjectId}/assign`,
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json",
+                    "Accept":"application/json"
+                },
+                body:JSON.stringify({
+                    employee_id:Number(employeeId)
+                })
+            }
+        );
 
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
+        const contentType =
+            response.headers.get("content-type") || "";
 
-                    body:
-                        JSON.stringify({
+        if(!contentType.toLowerCase().includes("application/json")){
 
-                            employee_id:
-                                Number(employeeId)
+            const text = await response.text();
 
-                        })
-
-                }
+            console.error(
+                "Assign Project Server Response:",
+                text
             );
-
-
-        const data =
-            await response.json();
-
-
-        if(!response.ok || !data.success){
 
             throw new Error(
-                data.message ||
-                "Unable to assign project"
+                `Server returned ${response.status} instead of JSON`
             );
-
         }
 
+        const data = await response.json();
+
+        if(!response.ok || !data.success){
+            throw new Error(
+                data.message || "Unable to assign project"
+            );
+        }
 
         closeAssignModal();
 
-
         showToast(
-            data.message ||
-            "Project assigned successfully"
+            data.message || "Project assigned successfully"
         );
-
 
         await loadProjects();
 
     }
     catch(error){
 
-        console.error(error);
-
-        showToast(
-            error.message
+        console.error(
+            "ASSIGN PROJECT ERROR:",
+            error
         );
 
+        showToast(
+            error.message || "Unable to assign project"
+        );
     }
-
-}
-
-
-function closeAssignModal(){
+}unction closeAssignModal(){
 
     assignProjectId =
         null;

@@ -218,6 +218,164 @@ def employee_projects(user_id):
         connection.close()        
 
 # =========================================================
+# ASSIGN PROJECT TO EMPLOYEE
+# =========================================================
+
+@app.route("/api/projects/<int:project_id>/assign", methods=["POST"])
+def assign_project_to_employee(project_id):
+
+    connection = get_connection()
+
+    if connection is None:
+        return jsonify({
+            "success": False,
+            "message": "Database connection failed"
+        }), 500
+
+    cursor = None
+
+    try:
+        data = request.get_json(silent=True) or {}
+        employee_id = data.get("employee_id")
+
+        if not employee_id:
+            return jsonify({
+                "success": False,
+                "message": "Employee ID is required"
+            }), 400
+
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+
+        # Check project
+        cursor.execute("""
+            SELECT id, project_name
+            FROM public.projects
+            WHERE id = %s
+            LIMIT 1
+        """, (project_id,))
+
+        project = cursor.fetchone()
+
+        if not project:
+            return jsonify({
+                "success": False,
+                "message": "Project not found"
+            }), 404
+
+        # Check employee. Name comes from users table.
+        cursor.execute("""
+            SELECT
+                e.id,
+                e.user_id,
+                u.name,
+                u.email,
+                e.employee_code,
+                e.status
+            FROM public.employees e
+            LEFT JOIN public.users u
+                ON e.user_id = u.id
+            WHERE e.id = %s
+            LIMIT 1
+        """, (employee_id,))
+
+        employee = cursor.fetchone()
+
+        if not employee:
+            return jsonify({
+                "success": False,
+                "message": "Employee not found"
+            }), 404
+
+        # Prevent duplicate assignment
+        cursor.execute("""
+            SELECT id
+            FROM public.tasks
+            WHERE project_id = %s
+              AND employee_id = %s
+            LIMIT 1
+        """, (project_id, employee_id))
+
+        if cursor.fetchone():
+            return jsonify({
+                "success": True,
+                "message": "Project is already assigned to this employee"
+            })
+
+        # Create assignment
+        cursor.execute("""
+            INSERT INTO public.tasks
+            (
+                project_id,
+                employee_id,
+                title,
+                description,
+                priority,
+                status
+            )
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (
+            project_id,
+            employee_id,
+            project["project_name"],
+            "Project assigned by Admin",
+            "Medium",
+            "Pending"
+        ))
+
+        # Notification is optional. If its table/columns are unavailable,
+        # assignment must still succeed.
+        if employee.get("user_id"):
+            try:
+                cursor.execute("SAVEPOINT project_notification")
+                cursor.execute("""
+                    INSERT INTO public.notifications
+                    (user_id, title, message, type)
+                    VALUES (%s, %s, %s, %s)
+                """, (
+                    employee["user_id"],
+                    "New Project Assigned",
+                    f'You have been assigned project: {project["project_name"]}',
+                    "project"
+                ))
+                cursor.execute("RELEASE SAVEPOINT project_notification")
+            except Exception as notification_error:
+                print("PROJECT NOTIFICATION ERROR:", notification_error)
+                try:
+                    cursor.execute("ROLLBACK TO SAVEPOINT project_notification")
+                    cursor.execute("RELEASE SAVEPOINT project_notification")
+                except Exception:
+                    pass
+
+        connection.commit()
+
+        return jsonify({
+            "success": True,
+            "message": (
+                f'Project "{project["project_name"]}" assigned to '
+                f'{employee.get("name") or "employee"} successfully'
+            ),
+            "project_id": project_id,
+            "employee_id": employee_id,
+            "employee_name": employee.get("name")
+        }), 201
+
+    except Exception as e:
+        if connection:
+            connection.rollback()
+
+        print("ASSIGN PROJECT ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "message": "Unable to assign project",
+            "error": str(e)
+        }), 500
+
+    finally:
+        close_db(connection, cursor)
+
+
+# =========================================================
 # BASIC PAGES
 # =========================================================
 
@@ -498,7 +656,7 @@ def create_employee_login(employee_id):
 
     data = request.get_json(silent=True) or {}
 
-    email = data.get("email", "").lower()
+    email = data.get("email", "").strip()
     password = data.get("password", "")
 
     if not email or not password:
@@ -622,7 +780,7 @@ def login_api():
 
     data = request.get_json(silent=True) or {}
 
-    email = data.get("email", "").lower()
+    email = data.get("email", "").strip()
     password = data.get("password", "")
 
     if not email or not password:
@@ -782,68 +940,31 @@ def login_api():
 
 @app.route("/api/employees", methods=["GET"])
 def get_employees():
-
     connection = get_connection()
-
     if connection is None:
-        return jsonify({
-            "success": False,
-            "message": "Database connection failed"
-        }), 500
+        return jsonify({"success": False, "message": "Database connection failed"}), 500
 
     cursor = None
-
     try:
-
-        cursor = connection.cursor(
-            cursor_factory=RealDictCursor
-        )
-
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute("""
-            SELECT
-                e.id,
-                e.user_id,
-                u.name,
-                u.email,
-                e.employee_code,
-                e.department,
-                e.designation,
-                e.phone,
-                e.joining_date,
-                e.status
-            FROM public.employees e
-            LEFT JOIN public.users u
-                ON e.user_id = u.id
+            SELECT e.id, e.name, e.user_id, e.employee_code,
+                   e.department, e.designation, e.phone,
+                   e.joining_date, e.status, u.email
+            FROM employees e
+            LEFT JOIN users u ON e.user_id = u.id
             ORDER BY e.id DESC
         """)
-
         employees = cursor.fetchall()
-
         for employee in employees:
-
             if employee.get("joining_date"):
-                employee["joining_date"] = str(
-                    employee["joining_date"]
-                )
-
-        return jsonify({
-            "success": True,
-            "employees": employees
-        })
-
-    except Exception as e:
-
-        print("GET EMPLOYEES ERROR:", e)
-
-        return jsonify({
-            "success": False,
-            "message": "Unable to fetch employees",
-            "error": str(e)
-        }), 500
-
-    finally:
-
+                employee["joining_date"] = str(employee["joining_date"])
         close_db(connection, cursor)
+        return jsonify({"success": True, "employees": employees})
+    except Exception as e:
+        close_db(connection, cursor)
+        return jsonify({"success": False, "message": "Unable to fetch employees", "error": str(e)}), 500
+
 
 @app.route("/api/employees", methods=["POST"])
 def add_employee():
