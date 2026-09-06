@@ -1860,7 +1860,7 @@ def get_today_attendance(user_id):
                 status, working_hours, created_at
             FROM attendance
             WHERE user_id = %s
-              AND attendance_date = CURRENT_DATE
+              AND attendance_date = (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata')::date
             LIMIT 1
         """, (user_id,))
 
@@ -1912,7 +1912,7 @@ def attendance_check_in(user_id):
             SELECT id, check_in, check_out, status
             FROM attendance
             WHERE user_id = %s
-              AND attendance_date = CURRENT_DATE
+              AND attendance_date = (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata')::date
             LIMIT 1
         """, (user_id,))
         existing = cursor.fetchone()
@@ -1927,14 +1927,14 @@ def attendance_check_in(user_id):
         if existing:
             cursor.execute("""
                 UPDATE attendance
-                SET check_in = NOW(), status = 'Present'
+                SET check_in = CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata', status = 'Present'
                 WHERE id = %s
             """, (existing["id"],))
         else:
             cursor.execute("""
                 INSERT INTO attendance
                 (user_id, attendance_date, check_in, status, working_hours)
-                VALUES (%s, CURRENT_DATE, NOW(), 'Present', 0)
+                VALUES (%s, (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata')::date, CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata', 'Present', 0)
             """, (user_id,))
 
         connection.commit()
@@ -1945,7 +1945,7 @@ def attendance_check_in(user_id):
                 status, working_hours, created_at
             FROM attendance
             WHERE user_id = %s
-              AND attendance_date = CURRENT_DATE
+              AND attendance_date = (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata')::date
             LIMIT 1
         """, (user_id,))
         attendance = cursor.fetchone()
@@ -1998,7 +1998,7 @@ def attendance_check_out(user_id):
             SELECT id, check_in, check_out, status
             FROM attendance
             WHERE user_id = %s
-              AND attendance_date = CURRENT_DATE
+              AND attendance_date = (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata')::date
             LIMIT 1
         """, (user_id,))
         attendance = cursor.fetchone()
@@ -2018,9 +2018,9 @@ def attendance_check_out(user_id):
         cursor.execute("""
             UPDATE attendance
             SET
-                check_out = NOW(),
+                check_out = CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata',
                 working_hours = ROUND(
-                    (EXTRACT(EPOCH FROM (NOW() - check_in)) / 3600.0)::numeric,
+                    (EXTRACT(EPOCH FROM ((CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata') - check_in)) / 3600.0)::numeric,
                     2
                 )
             WHERE id = %s
