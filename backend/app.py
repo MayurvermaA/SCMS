@@ -782,31 +782,68 @@ def login_api():
 
 @app.route("/api/employees", methods=["GET"])
 def get_employees():
+
     connection = get_connection()
+
     if connection is None:
-        return jsonify({"success": False, "message": "Database connection failed"}), 500
+        return jsonify({
+            "success": False,
+            "message": "Database connection failed"
+        }), 500
 
     cursor = None
+
     try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
+
+        cursor = connection.cursor(
+            cursor_factory=RealDictCursor
+        )
+
         cursor.execute("""
-            SELECT e.id, e.name, e.user_id, e.employee_code,
-                   e.department, e.designation, e.phone,
-                   e.joining_date, e.status, u.email
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id
+            SELECT
+                e.id,
+                e.user_id,
+                u.name,
+                u.email,
+                e.employee_code,
+                e.department,
+                e.designation,
+                e.phone,
+                e.joining_date,
+                e.status
+            FROM public.employees e
+            LEFT JOIN public.users u
+                ON e.user_id = u.id
             ORDER BY e.id DESC
         """)
-        employees = cursor.fetchall()
-        for employee in employees:
-            if employee.get("joining_date"):
-                employee["joining_date"] = str(employee["joining_date"])
-        close_db(connection, cursor)
-        return jsonify({"success": True, "employees": employees})
-    except Exception as e:
-        close_db(connection, cursor)
-        return jsonify({"success": False, "message": "Unable to fetch employees", "error": str(e)}), 500
 
+        employees = cursor.fetchall()
+
+        for employee in employees:
+
+            if employee.get("joining_date"):
+                employee["joining_date"] = str(
+                    employee["joining_date"]
+                )
+
+        return jsonify({
+            "success": True,
+            "employees": employees
+        })
+
+    except Exception as e:
+
+        print("GET EMPLOYEES ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "message": "Unable to fetch employees",
+            "error": str(e)
+        }), 500
+
+    finally:
+
+        close_db(connection, cursor)
 
 @app.route("/api/employees", methods=["POST"])
 def add_employee():
