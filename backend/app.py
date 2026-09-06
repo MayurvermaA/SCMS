@@ -498,7 +498,7 @@ def create_employee_login(employee_id):
 
     data = request.get_json(silent=True) or {}
 
-    email = data.get("email", "").strip()
+    email = data.get("email", "").lower()
     password = data.get("password", "")
 
     if not email or not password:
@@ -622,7 +622,7 @@ def login_api():
 
     data = request.get_json(silent=True) or {}
 
-    email = data.get("email", "").strip()
+    email = data.get("email", "").lower()
     password = data.get("password", "")
 
     if not email or not password:
