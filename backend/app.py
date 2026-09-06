@@ -948,11 +948,20 @@ def get_employees():
     try:
         cursor = connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute("""
-            SELECT e.id, e.name, e.user_id, e.employee_code,
-                   e.department, e.designation, e.phone,
-                   e.joining_date, e.status, u.email
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id
+            SELECT
+                e.id,
+                e.user_id,
+                u.name,
+                u.email,
+                e.employee_code,
+                e.department,
+                e.designation,
+                e.phone,
+                e.joining_date,
+                e.status
+            FROM public.employees e
+            LEFT JOIN public.users u
+                ON e.user_id = u.id
             ORDER BY e.id DESC
         """)
         employees = cursor.fetchall()
